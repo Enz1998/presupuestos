@@ -296,6 +296,37 @@ export default function HomePage() {
                 />
               </div>
             </div>
+
+            {/* Botón generar */}
+            <div className="card animate-fadein" style={{ padding: '24px', border: '2px solid var(--naaloo-blue-light)' }}>
+              {error && (
+                <div className="alert alert-error" style={{ marginBottom: '16px' }}>
+                  <span>⚠</span> {error}
+                </div>
+              )}
+              {success && (
+                <div className="alert alert-success" style={{ marginBottom: '16px' }}>
+                  <span>✓</span> Presupuesto generado y guardado correctamente.
+                </div>
+              )}
+
+              <button
+                id="btn-generar"
+                type="submit"
+                className="btn-primary"
+                disabled={loading}
+                style={{ width: '100%', justifyContent: 'center', padding: '16px 24px', fontSize: '16px', fontWeight: 600 }}
+              >
+                {loading ? (
+                  <><div className="spinner" /> Generando...</>
+                ) : (
+                  <><span>↓</span> Generar Presupuesto</>
+                )}
+              </button>
+              <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--naaloo-gray-500)', marginTop: '12px' }}>
+                Guarda el historial en la nube y descarga el archivo PPTX automáticamente
+              </p>
+            </div>
           </div>
 
           {/* ── COLUMNA DERECHA: Rangos de referencia ─────────────────── */}
@@ -360,36 +391,7 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* Botón generar */}
-            <div className="card animate-fadein" style={{ padding: '20px' }}>
-              {error && (
-                <div className="alert alert-error" style={{ marginBottom: '16px' }}>
-                  <span>⚠</span> {error}
-                </div>
-              )}
-              {success && (
-                <div className="alert alert-success" style={{ marginBottom: '16px' }}>
-                  <span>✓</span> Presupuesto generado y guardado correctamente.
-                </div>
-              )}
-
-              <button
-                id="btn-generar"
-                type="submit"
-                className="btn-primary"
-                disabled={loading}
-                style={{ width: '100%', justifyContent: 'center', padding: '14px 24px', fontSize: '15px' }}
-              >
-                {loading ? (
-                  <><div className="spinner" /> Generando...</>
-                ) : (
-                  <><span>↓</span> Generar Presupuesto</>
-                )}
-              </button>
-              <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--naaloo-gray-400)', marginTop: '10px' }}>
-                Guarda en Supabase y descarga el PPTX automáticamente
-              </p>
-            </div>
+            {/* El botón de generar fue movido a la izquierda */}
           </div>
         </div>
       </form>
