@@ -88,11 +88,15 @@ export default function HomePage() {
     setSuccess(false)
 
     if (!nombreEmpresa.trim()) {
-      setError('El nombre de empresa es requerido.')
+      setError('Por favor, ingresá el nombre de la empresa.')
       return
     }
-    if (cantidadUsuarios < 1) {
+    if (Number(cantidadUsuarios) < 1) {
       setError('La cantidad de usuarios debe ser mayor a 0.')
+      return
+    }
+    if (Number(valorLicencia) < 0) {
+      setError('El valor de la licencia no puede ser negativo.')
       return
     }
 
@@ -343,10 +347,10 @@ export default function HomePage() {
                             {r.nombre}
                           </td>
                           <td style={{ fontWeight: 600, color: 'var(--naaloo-blue)' }}>
-                            ${formatPesoCOP(r.valor_unitario)}
+                            ${formatPesoCOP(Number(r.valor_unitario))}
                           </td>
                           <td style={{ color: 'var(--naaloo-gray-600)', fontSize: '12px' }}>
-                            ${formatPesoCOP(Math.round(cantidadUsuarios * r.valor_unitario))}
+                            ${formatPesoCOP(Math.round(Number(cantidadUsuarios) * Number(r.valor_unitario)))}
                           </td>
                         </tr>
                       ))}
