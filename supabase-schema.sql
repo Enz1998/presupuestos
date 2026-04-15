@@ -4,57 +4,59 @@
 -- ============================================================
 
 -- Tabla de rangos de precio
-CREATE TABLE rangos_precio (
+CREATE TABLE IF NOT EXISTS rangos_precio (
   id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  nombre          TEXT NOT NULL,            -- ej: "1 a 50 usuarios"
-  rango_min       INTEGER NOT NULL,         -- mínimo de usuarios (inclusivo)
-  rango_max       INTEGER,                  -- máximo de usuarios (null = sin límite)
-  valor_unitario  NUMERIC(12,2) NOT NULL,   -- precio por colaborador, en pesos sin IVA
+  nombre          TEXT NOT NULL,
+  rango_min       INTEGER NOT NULL,
+  rango_max       INTEGER,
+  valor_unitario  NUMERIC(12,2) NOT NULL,
   activo          BOOLEAN DEFAULT TRUE,
   creado_en       TIMESTAMPTZ DEFAULT NOW(),
   actualizado_en  TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Datos iniciales de rangos
--- valor_licencia = cantidad_usuarios × valor_unitario
--- El template actual: 212 usuarios × $2.190 = $464.280 (coincide con el PPTX)
-INSERT INTO rangos_precio (nombre, rango_min, rango_max, valor_unitario) VALUES
-  ('1 a 50 usuarios',      1,   50,  3000),
-  ('51 a 100 usuarios',    51,  100, 2500),
-  ('101 a 200 usuarios',   101, 200, 2300),
-  ('201 a 300 usuarios',   201, 300, 2190),
-  ('301 a 500 usuarios',   301, 500, 2000),
-  ('Más de 500 usuarios',  501, NULL,1800);
+-- Secuencia para número de acuerdo (arranca en 1001)
+CREATE SEQUENCE IF NOT EXISTS acuerdos_seq START 1001;
 
 -- Tabla de presupuestos generados
-CREATE TABLE presupuestos (
+CREATE TABLE IF NOT EXISTS presupuestos (
   id                    UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  numero_acuerdo        INTEGER DEFAULT nextval('acuerdos_seq'),
+  version               INTEGER DEFAULT 1,
   nombre_empresa        TEXT NOT NULL,
   cantidad_usuarios     INTEGER DEFAULT 212 NOT NULL,
-  valor_unitario        NUMERIC(12,2),             -- precio por colaborador del rango aplicado
-  valor_licencia        NUMERIC(12,2) NOT NULL,    -- cantidad_usuarios × valor_unitario
+  valor_unitario        NUMERIC(12,2),
+  valor_licencia        NUMERIC(12,2) NOT NULL,
   descuento_porcentaje  INTEGER DEFAULT 25,
   descuento_meses       INTEGER DEFAULT 6,
-  recurso_excedente     NUMERIC(12,2),             -- = valor_unitario (precio por usuario extra)
-  valor_total_mensual   NUMERIC(12,2),             -- valor_licencia × (1 - descuento%)
+  recurso_excedente     NUMERIC(12,2),
+  valor_total_mensual   NUMERIC(12,2),
   fecha_propuesta       DATE NOT NULL,
-  rango_id              UUID REFERENCES rangos_precio(id),
+  rango_id              UUID REFERENCES rangos_precio(id) ON DELETE SET NULL,
   creado_en             TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Índices
-CREATE INDEX idx_presupuestos_creado ON presupuestos(creado_en DESC);
-CREATE INDEX idx_rangos_activo ON rangos_precio(activo, rango_min);
+CREATE INDEX IF NOT EXISTS idx_presupuestos_creado ON presupuestos(creado_en DESC);
+CREATE INDEX IF NOT EXISTS idx_rangos_activo ON rangos_precio(activo, rango_min);
 
--- RLS permisivo para MVP sin auth
+-- Habilitar RLS
 ALTER TABLE rangos_precio ENABLE ROW LEVEL SECURITY;
 ALTER TABLE presupuestos ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "allow_all_rangos" ON rangos_precio FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "allow_all_presupuestos" ON presupuestos FOR ALL USING (true) WITH CHECK (true);
+-- POLÍTICAS: Solo usuarios autenticados pueden ver o modificar datos ==================
+DROP POLICY IF EXISTS "allow_all_rangos" ON rangos_precio;
+DROP POLICY IF EXISTS "allow_all_presupuestos" ON presupuestos;
+DROP POLICY IF EXISTS "allow_auth_rangos" ON rangos_precio;
+DROP POLICY IF EXISTS "allow_auth_presupuestos" ON presupuestos;
+
+CREATE POLICY "allow_auth_rangos" ON rangos_precio FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "allow_auth_presupuestos" ON presupuestos FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
 
 -- ============================================================
--- MIGRACIÓN (si ya ejecutaste el schema anterior):
+-- MIGRACIÓN SI YA TENÍAS LA BASE DE DATOS CREADA ANTERIORMENTE:
 -- ============================================================
--- ALTER TABLE rangos_precio RENAME COLUMN valor_licencia TO valor_unitario;
--- ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS valor_unitario NUMERIC(12,2);
+-- ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS numero_acuerdo INTEGER DEFAULT nextval('acuerdos_seq');
+-- ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS version INTEGER DEFAULT 1;
+-- 
+-- (Al ejecutar todo este archivo, actualizará las políticas automáticamente y creará la secuencia)

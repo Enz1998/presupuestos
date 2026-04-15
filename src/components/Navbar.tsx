@@ -42,9 +42,34 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation */}
-        <nav style={{ display: 'flex', gap: '4px' }}>
+        <nav style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
           <NavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} />
           <NavLink href="/rangos" label="Rangos de Precio" active={pathname === '/rangos'} />
+          <NavLink href="/historial" label="Historial" active={pathname === '/historial'} />
+          
+          <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.2)', margin: '0 8px' }}></div>
+          
+          <button 
+            onClick={async () => {
+              const { createClient } = await import('@/utils/supabase/client')
+              const supabase = createClient()
+              await supabase.auth.signOut()
+              window.location.href = '/login'
+            }}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontWeight: 500,
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: '#FCA5A5',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              cursor: 'pointer',
+              marginLeft: '8px'
+            }}
+          >
+            Salir
+          </button>
         </nav>
       </div>
     </header>

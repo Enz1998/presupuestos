@@ -13,23 +13,20 @@ function getTodayISO(): string {
   return now.toISOString().split('T')[0]
 }
 
-const DEFAULTS = {
-  cantidad_usuarios: 212,
-  descuento_porcentaje: 25,
-  descuento_meses: 6,
-}
+// Sin valores por defecto - el usuario debe completar todo
+
 
 export default function HomePage() {
   const [rangos, setRangos] = useState<RangoPrecio[]>([])
   const [loadingRangos, setLoadingRangos] = useState(true)
 
-  // Formulario
+  // Formulario vacío por defecto
   const [nombreEmpresa, setNombreEmpresa] = useState('')
   const [fecha, setFecha] = useState(getTodayISO())
-  const [cantidadUsuarios, setCantidadUsuarios] = useState<number>(DEFAULTS.cantidad_usuarios)
-  const [valorLicencia, setValorLicencia] = useState<number>(0)
-  const [descuentoPct, setDescuentoPct] = useState<number>(DEFAULTS.descuento_porcentaje)
-  const [descuentoMeses, setDescuentoMeses] = useState<number>(DEFAULTS.descuento_meses)
+  const [cantidadUsuarios, setCantidadUsuarios] = useState<number | string>('')
+  const [valorLicencia, setValorLicencia] = useState<number | string>('')
+  const [descuentoPct, setDescuentoPct] = useState<number | string>('')
+  const [descuentoMeses, setDescuentoMeses] = useState<number | string>('')
 
   // Calculados
   const [rangoActivo, setRangoActivo] = useState<RangoPrecio | null>(null)
@@ -53,14 +50,15 @@ export default function HomePage() {
       .catch(() => setLoadingRangos(false))
   }, [])
 
-  // Auto-selección del rango cuando cambia cantidadUsuarios o rangos
+  // Auto-selección del rango
   useEffect(() => {
-    if (rangos.length === 0) return
-    const rango = findRangoForUsuarios(rangos, cantidadUsuarios)
+    const usuarios = Number(cantidadUsuarios) || 0
+    if (rangos.length === 0 || !usuarios) return
+    const rango = findRangoForUsuarios(rangos, usuarios)
     if (rango) {
       setRangoActivo(rango)
       setValorUnitario(rango.valor_unitario)
-      setValorLicencia(Math.round(cantidadUsuarios * rango.valor_unitario))
+      setValorLicencia(Math.round(usuarios * rango.valor_unitario))
     } else {
       setRangoActivo(null)
     }
@@ -68,14 +66,18 @@ export default function HomePage() {
 
   // Recalcular derivados
   useEffect(() => {
+    const usuarios = Number(cantidadUsuarios) || 0
+    const licencia = Number(valorLicencia) || 0
+    const pct = Number(descuentoPct) || 0
+    
     // Si hay rango activo, el excedente ES el valor unitario del rango
     // Si se editó manualmente el valor licencia, calculamos dividiendo
     const excedente = rangoActivo
       ? rangoActivo.valor_unitario
-      : (cantidadUsuarios > 0 && valorLicencia > 0
-          ? roundToNearest10(valorLicencia / cantidadUsuarios)
+      : (usuarios > 0 && licencia > 0
+          ? roundToNearest10(licencia / usuarios)
           : 0)
-    const total = Math.round(valorLicencia * (1 - descuentoPct / 100))
+    const total = Math.round(licencia * (1 - pct / 100))
     setRecursoExcedente(excedente)
     setValorTotal(total)
   }, [valorLicencia, cantidadUsuarios, descuentoPct, rangoActivo])
@@ -101,10 +103,10 @@ export default function HomePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombre_empresa: nombreEmpresa.trim(),
-          cantidad_usuarios: cantidadUsuarios,
-          valor_licencia: valorLicencia,
-          descuento_porcentaje: descuentoPct,
-          descuento_meses: descuentoMeses,
+          cantidad_usuarios: Number(cantidadUsuarios),
+          valor_licencia: Number(valorLicencia),
+          descuento_porcentaje: Number(descuentoPct) || 0,
+          descuento_meses: Number(descuentoMeses) || 1,
           fecha_propuesta: fecha,
           rango_id: rangoActivo?.id ?? null,
         }),
@@ -265,8 +267,9 @@ export default function HomePage() {
                     type="number"
                     className="input"
                     min={1}
+                    placeholder="Ej: 6"
                     value={descuentoMeses}
-                    onChange={(e) => setDescuentoMeses(parseInt(e.target.value) || 1)}
+                    onChange={(e) => setDescuentoMeses(e.target.value)}
                   />
                 </div>
               </div>

@@ -5,7 +5,10 @@ import { RangoPrecio } from '@/lib/supabase'
 function formatPeso(v: number | string) {
   const n = typeof v === 'string' ? parseFloat(v) : v
   if (isNaN(n)) return ''
-  return Math.round(n).toLocaleString('es-AR').replace(/,/g, '.')
+  return n.toLocaleString('es-AR', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })
 }
 
 const EMPTY_FORM = {

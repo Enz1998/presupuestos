@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase, roundToNearest10 } from '@/lib/supabase'
+import { roundToNearest10 } from '@/lib/supabase'
 import { generatePptx } from '@/lib/pptx-generator'
 import { format } from 'date-fns'
+import { createClient } from '@/utils/supabase/server'
 
 // POST /api/generar – guardar presupuesto y devolver PPTX
 export async function POST(req: NextRequest) {
@@ -32,11 +33,27 @@ export async function POST(req: NextRequest) {
     const recursoExcedente = roundToNearest10(valor_licencia / cantidad_usuarios)
     const valorTotalMensual = Math.round(valor_licencia * (1 - descuento_porcentaje / 100))
 
+    const supabase = await createClient()
+
+    // Lógica inteligente de Versión: buscar si la empresa ya existe
+    let nuevaVersion = 1
+    const { data: presupuestosPrevios } = await supabase
+      .from('presupuestos')
+      .select('version')
+      .ilike('nombre_empresa', nombre_empresa.trim())
+      .order('version', { ascending: false })
+      .limit(1)
+
+    if (presupuestosPrevios && presupuestosPrevios.length > 0) {
+      nuevaVersion = presupuestosPrevios[0].version + 1
+    }
+
     // Guardar en Supabase
     const { data: presupuesto, error: dbError } = await supabase
       .from('presupuestos')
       .insert({
         nombre_empresa: nombre_empresa.trim(),
+        version: nuevaVersion,
         cantidad_usuarios,
         valor_licencia,
         descuento_porcentaje,
@@ -70,7 +87,8 @@ export async function POST(req: NextRequest) {
       fechaPropuesta: fechaFormateada,
     })
 
-    const nombreArchivo = `Propuesta_${nombre_empresa.trim().replace(/\s+/g, '_')}_${fecha_propuesta}.pptx`
+    const versionString = nuevaVersion > 1 ? `_V${nuevaVersion}` : ''
+    const nombreArchivo = `Propuesta_${nombre_empresa.trim().replace(/\s+/g, '_')}${versionString}_${fecha_propuesta}.pptx`
 
     // Devolver el ID y el objeto en el body por si falla el blob
     return NextResponse.json(presupuesto, {
@@ -86,13 +104,22 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/generar – listar últimos presupuestos
-export async function GET() {
-  const { data, error } = await supabase
+// GET /api/generar – listar presupuestos con filtro opcional
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const q = searchParams.get('q') || ''
+  
+  const supabase = await createClient()
+  let query = supabase
     .from('presupuestos')
     .select('*')
     .order('creado_en', { ascending: false })
-    .limit(20)
+
+  if (q) {
+    query = query.ilike('nombre_empresa', `%${q}%`)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

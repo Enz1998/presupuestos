@@ -20,6 +20,8 @@ export interface RangoPrecio {
 
 export interface Presupuesto {
   id: string
+  numero_acuerdo: number
+  version: number
   nombre_empresa: string
   cantidad_usuarios: number
   valor_licencia: number
@@ -61,5 +63,8 @@ export function roundToNearest10(value: number): number {
  * Formatea número al estilo argentino: 464280 → "464.280"
  */
 export function formatPeso(value: number): string {
-  return Math.round(value).toLocaleString('es-AR').replace(/,/g, '.')
+  return value.toLocaleString('es-AR', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })
 }

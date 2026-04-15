@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 
 // POST /api/rangos/bulk-delete
 export async function POST(req: NextRequest) {
@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json({ error: 'No se enviaron IDs válidos' }, { status: 400 })
     }
+
+    const supabase = await createClient()
 
     const { error } = await supabase
       .from('rangos_precio')

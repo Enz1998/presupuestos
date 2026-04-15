@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 
 // GET /api/rangos – listar todos los rangos ordenados por rango_min
 export async function GET() {
+  const supabase = await createClient()
   const { data, error } = await supabase
     .from('rangos_precio')
     .select('*')
@@ -22,6 +23,8 @@ export async function POST(req: NextRequest) {
   if (!nombre || rango_min == null || valor_unitario == null) {
     return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
   }
+
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('rangos_precio')

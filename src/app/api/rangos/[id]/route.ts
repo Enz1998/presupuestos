@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 
 // PUT /api/rangos/[id] – actualizar rango
 export async function PUT(
@@ -9,6 +9,8 @@ export async function PUT(
   const { id } = await params
   const body = await req.json()
   const { nombre, rango_min, rango_max, valor_unitario, activo } = body
+
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('rangos_precio')
@@ -29,6 +31,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from('rangos_precio')

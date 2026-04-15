@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/utils/supabase/server'
 import { generatePptx } from '@/lib/pptx-generator'
 import { format } from 'date-fns'
 
@@ -9,6 +9,8 @@ export async function GET(
 ) {
   try {
     const { id } = await params
+
+    const supabase = await createClient()
 
     // 1. Obtener los datos del presupuesto de Supabase
     const { data: p, error } = await supabase
