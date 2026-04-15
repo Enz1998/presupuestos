@@ -336,7 +336,7 @@ export default function HomePage() {
                           onClick={() => {
                             setRangoActivo(r)
                             setValorUnitario(r.valor_unitario)
-                            setValorLicencia(Math.round(cantidadUsuarios * r.valor_unitario))
+                            setValorLicencia(Math.round(Number(cantidadUsuarios) * r.valor_unitario))
                           }}
                           title="Click para aplicar este rango"
                         >
