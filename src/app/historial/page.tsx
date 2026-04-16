@@ -73,36 +73,35 @@ export default function HistorialPage() {
   }
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 24px' }}>
-      <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <div className="max-w-[1400px] mx-auto px-4 md:px-6">
+      <div className="mb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
         <div>
-          <h1 style={{ fontSize: '26px', fontWeight: 700, color: 'var(--naaloo-text)', marginBottom: '6px' }}>
+          <h1 className="text-2xl md:text-[26px] font-bold text-[var(--naaloo-text)] mb-1 md:mb-1.5">
             Historial de Presupuestos
           </h1>
-          <p style={{ color: 'var(--naaloo-gray-600)', fontSize: '14px' }}>
+          <p className="text-[var(--naaloo-gray-600)] text-sm">
             Registro de propuestas emitidas. Podés editar el número de acuerdo o eliminar registros.
           </p>
         </div>
         
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="flex flex-wrap md:flex-nowrap gap-2 md:gap-2.5 w-full md:w-auto mt-4 md:mt-0">
           {selectedIds.length > 0 && (
-            <button className="btn-danger" onClick={handleDeleteSelected}>
+            <button className="btn-danger w-full md:w-auto justify-center md:flex-shrink-0" onClick={handleDeleteSelected}>
               Eliminar sel. ({selectedIds.length})
             </button>
           )}
           <input 
             type="text" 
-            className="input" 
+            className="input w-full md:w-[250px]" 
             placeholder="Buscar empresa..." 
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            style={{ width: '250px' }}
           />
-          <button onClick={() => loadHistorial(q)} className="btn-secondary">Buscar</button>
+          <button onClick={() => loadHistorial(q)} className="btn-secondary w-full md:w-auto justify-center flex-shrink-0">Buscar</button>
         </div>
       </div>
 
-      <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
+      <div className="card p-0 w-full overflow-x-auto">
         {loading ? (
           <div style={{ padding: '48px', textAlign: 'center' }}>Cargando historial...</div>
         ) : (
@@ -156,9 +155,9 @@ export default function HistorialPage() {
                     ${formatPeso(p.valor_total_mensual)}
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                      <a href={`/api/download/${p.id}`} className="btn-ghost" style={{ padding: '4px 8px' }}>↓</a>
-                      <button onClick={() => handleDelete(p.id)} className="btn-danger" style={{ padding: '4px 8px' }}>✕</button>
+                    <div className="flex gap-1.5 justify-end mt-2 md:mt-0">
+                      <a href={`/api/download/${p.id}`} className="btn-ghost px-2 py-1">↓</a>
+                      <button onClick={() => handleDelete(p.id)} className="btn-danger px-2 py-1">✕</button>
                     </div>
                   </td>
                 </tr>

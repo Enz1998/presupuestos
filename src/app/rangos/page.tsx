@@ -155,39 +155,39 @@ export default function RangosPage() {
   }
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 24px' }}>
-      <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <div className="max-w-[1000px] mx-auto px-4 md:px-6">
+      <div className="mb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
         <div>
-          <h1 style={{ fontSize: '26px', fontWeight: 700, color: 'var(--naaloo-text)', marginBottom: '6px' }}>
+          <h1 className="text-2xl md:text-[26px] font-bold text-[var(--naaloo-text)] mb-1 md:mb-1.5">
             Rangos de Precio
           </h1>
-          <p style={{ color: 'var(--naaloo-gray-600)', fontSize: '14px' }}>
+          <p className="text-[var(--naaloo-gray-600)] text-sm">
             Configurá los rangos de usuarios y sus valores unitarios (P.U.).
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="flex flex-col md:flex-row gap-2.5 w-full md:w-auto mt-4 md:mt-0">
           {selectedIds.length > 0 && (
-            <button className="btn-danger" onClick={handleDeleteMany}>
+            <button className="btn-danger w-full md:w-auto justify-center" onClick={handleDeleteMany}>
               Eliminar seleccionados ({selectedIds.length})
             </button>
           )}
-          <button id="btn-nuevo-rango" className="btn-primary" onClick={handleNew}>
+          <button id="btn-nuevo-rango" className="btn-primary w-full md:w-auto justify-center" onClick={handleNew}>
             + Nuevo rango
           </button>
         </div>
       </div>
 
       {feedback && (
-        <div className={`alert alert-${feedback.type === 'success' ? 'success' : 'error'} animate-fadein`} style={{ marginBottom: '20px' }}>
+        <div className={`alert alert-${feedback.type === 'success' ? 'success' : 'error'} animate-fadein mb-5`}>
           <span>{feedback.type === 'success' ? '✓' : '⚠'}</span> {feedback.msg}
         </div>
       )}
 
       {showForm && (
-        <div className="card animate-fadein" style={{ marginBottom: '24px', border: '2px solid var(--naaloo-blue-light)' }}>
+        <div className="card animate-fadein mb-6 border-2 border-[var(--naaloo-blue-light)]">
           <p className="section-title">{editingId ? 'Editar rango' : 'Nuevo rango'}</p>
           <form onSubmit={handleSave}>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1.5fr', gap: '16px', alignItems: 'end' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1.5fr] gap-4 items-start md:items-end">
               <div>
                 <label className="input-label">Nombre del rango</label>
                 <input type="text" className="input" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
@@ -205,17 +205,17 @@ export default function RangosPage() {
                 <input type="number" className="input" value={form.valor_unitario} onChange={(e) => setForm({ ...form, valor_unitario: e.target.value })} required />
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button type="submit" className="btn-primary" disabled={saving}>
+            <div className="flex flex-col sm:flex-row gap-2.5 mt-5">
+              <button type="submit" className="btn-primary sm:w-auto w-full justify-center" disabled={saving}>
                 {saving ? 'Guardando...' : (editingId ? 'Guardar cambios' : 'Crear rango')}
               </button>
-              <button type="button" className="btn-secondary" onClick={handleCancel}>Cancelar</button>
+              <button type="button" className="btn-secondary sm:w-auto w-full justify-center" onClick={handleCancel}>Cancelar</button>
             </div>
           </form>
         </div>
       )}
 
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="card p-0 w-full overflow-x-auto">
         {loading ? (
           <div style={{ textAlign: 'center', padding: '48px' }}>Cargando...</div>
         ) : (
@@ -249,7 +249,7 @@ export default function RangosPage() {
                     </button>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                    <div className="flex gap-1.5 justify-end">
                       <button className="btn-ghost" onClick={() => handleEdit(r)}>Editar</button>
                     </div>
                   </td>

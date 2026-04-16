@@ -5,18 +5,18 @@ export default async function LoginPage(props: {
 }) {
   const searchParams = await props.searchParams;
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', padding: '24px' }}>
-      <div className="card animate-fadein" style={{ width: '100%', maxWidth: '400px', border: '2px solid var(--naaloo-blue-light)' }}>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--naaloo-text)', marginBottom: '8px' }}>
+    <div className="flex justify-center items-center min-h-[60vh] p-4 md:p-6">
+      <div className="card animate-fadein w-full max-w-[400px] border-2 border-[var(--naaloo-blue-light)]">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-[var(--naaloo-text)] mb-2">
             Naaloo Presupuestos
           </h1>
-          <p style={{ fontSize: '14px', color: 'var(--naaloo-gray-600)' }}>
+          <p className="text-sm text-[var(--naaloo-gray-600)]">
             Iniciá sesión para acceder al sistema
           </p>
         </div>
 
-        <form action={login} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }} autoComplete="off">
+        <form action={login} className="flex flex-col gap-4" autoComplete="off">
           <div>
             <label className="input-label" htmlFor="email">Correo electrónico</label>
             <input
@@ -42,12 +42,12 @@ export default async function LoginPage(props: {
           </div>
 
           {searchParams?.error && (
-            <div className="alert alert-error" style={{ fontSize: '13px', padding: '8px 12px' }}>
+            <div className="alert alert-error text-[13px] px-3 py-2">
               Credenciales incorrectas
             </div>
           )}
 
-          <button className="btn-primary" type="submit" style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+          <button className="btn-primary w-full justify-center mt-2" type="submit">
             Ingresar
           </button>
         </form>

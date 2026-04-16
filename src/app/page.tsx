@@ -143,27 +143,28 @@ export default function HomePage() {
   }, [nombreEmpresa, cantidadUsuarios, valorLicencia, descuentoPct, descuentoMeses, fecha, rangoActivo])
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px' }}>
+  return (
+    <div className="max-w-[1100px] mx-auto px-4 md:px-6">
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '26px', fontWeight: 700, color: 'var(--naaloo-text)', marginBottom: '6px' }}>
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-[26px] font-bold text-[var(--naaloo-text)] mb-1 md:mb-1.5">
           Nueva Propuesta Comercial
         </h1>
-        <p style={{ color: 'var(--naaloo-gray-600)', fontSize: '14px' }}>
+        <p className="text-sm text-[var(--naaloo-gray-600)]">
           Completá los datos del cliente y generá la propuesta en PPTX automáticamente.
         </p>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px', alignItems: 'start' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
 
           {/* ── COLUMNA IZQUIERDA ──────────────────────────────────────── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="flex flex-col gap-5">
 
             {/* Datos del cliente */}
             <div className="card animate-fadein">
               <p className="section-title">Datos del cliente</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className="flex flex-col gap-4">
                 <div>
                   <label className="input-label" htmlFor="nombre_empresa">
                     Nombre de empresa
@@ -200,7 +201,7 @@ export default function HomePage() {
             {/* Datos de la licencia */}
             <div className="card animate-fadein">
               <p className="section-title">Licencia</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 {/* Usuarios */}
                 <div>
@@ -282,7 +283,7 @@ export default function HomePage() {
             {/* Valores calculados */}
             <div className="card animate-fadein">
               <p className="section-title">Resumen calculado</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <CalcField
                   label="Recurso excedente ($/usuario extra)"
                   value={`$${formatPesoCOP(recursoExcedente)} + IVA`}
@@ -330,10 +331,10 @@ export default function HomePage() {
           </div>
 
           {/* ── COLUMNA DERECHA: Rangos de referencia ─────────────────── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'sticky', top: '88px' }}>
+          <div className="flex flex-col gap-5 sticky top-[88px]">
             <div className="card animate-fadein">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <p className="section-title" style={{ marginBottom: 0 }}>Rangos de precio</p>
+              <div className="flex justify-between items-center mb-4">
+                <p className="section-title !mb-0">Rangos de precio</p>
                 <a
                   href="/rangos"
                   style={{ fontSize: '12px', color: 'var(--naaloo-blue)', textDecoration: 'none', fontWeight: 500 }}

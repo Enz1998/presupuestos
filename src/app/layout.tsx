@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Navbar />
-        <main style={{ minHeight: 'calc(100vh - 64px)', padding: '32px 0 64px' }}>
+        <main className="min-h-[calc(100vh-64px)] pt-6 pb-16 md:pt-8">
           {children}
         </main>
       </body>
