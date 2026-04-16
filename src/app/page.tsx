@@ -143,13 +143,13 @@ export default function HomePage() {
   }, [nombreEmpresa, cantidadUsuarios, valorLicencia, descuentoPct, descuentoMeses, fecha, rangoActivo])
 
   return (
-    <div className="max-w-[1100px] mx-auto px-6 md:px-8">
+    <div className="max-w-[1100px] mx-auto px-5 md:px-8">
       {/* Header */}
-      <div className="mb-10 md:mb-12">
-        <h1 className="text-2xl md:text-[26px] font-bold text-[var(--naaloo-text)] mb-1 md:mb-1.5">
+      <div className="mb-8 md:mb-12">
+        <h1 className="text-xl md:text-3xl font-extrabold text-[var(--naaloo-text)] mb-2 tracking-tight">
           Nueva Propuesta Comercial
         </h1>
-        <p className="text-sm text-[var(--naaloo-gray-600)]">
+        <p className="text-sm md:text-base text-[var(--naaloo-gray-600)] leading-relaxed max-w-2xl">
           Completá los datos del cliente y generá la propuesta en PPTX automáticamente.
         </p>
       </div>
@@ -216,10 +216,10 @@ export default function HomePage() {
                     onChange={(e) => setCantidadUsuarios(parseInt(e.target.value) || 1)}
                   />
                   {rangoActivo
-                    ? <p className="input-hint" style={{ color: 'var(--naaloo-blue)' }}>
+                    ? <p className="input-hint font-semibold text-[var(--naaloo-blue)]">
                         Rango: {rangoActivo.nombre}
                       </p>
-                    : <p className="input-hint" style={{ color: 'var(--naaloo-warning)' }}>
+                    : <p className="input-hint font-semibold text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 inline-block">
                         Sin rango configurado para este volumen
                       </p>
                   }
@@ -313,9 +313,8 @@ export default function HomePage() {
               <button
                 id="btn-generar"
                 type="submit"
-                className="btn-primary"
+                className="btn-primary w-full justify-center py-5 text-lg shadow-xl shadow-blue-500/20 active:scale-[0.98]"
                 disabled={loading}
-                style={{ width: '100%', justifyContent: 'center', padding: '16px 24px', fontSize: '16px', fontWeight: 600 }}
               >
                 {loading ? (
                   <><div className="spinner" /> Generando...</>
@@ -323,8 +322,8 @@ export default function HomePage() {
                   <><span>↓</span> Generar Presupuesto</>
                 )}
               </button>
-              <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--naaloo-gray-500)', marginTop: '12px' }}>
-                Guarda el historial en la nube y descarga el archivo PPTX automáticamente
+              <p className="text-center text-[11px] text-[var(--naaloo-gray-400)] mt-4 font-medium uppercase tracking-wider">
+                Guardado automático en la nube
               </p>
             </div>
           </div>
@@ -405,14 +404,16 @@ function CalcField({
   label: string; value: string; hint?: string; highlight?: boolean
 }) {
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <label className="input-label">{label}</label>
       <div
-        className="value-display"
+        className={`value-display flex-grow flex items-center ${highlight ? 'highlighted-value' : ''}`}
         style={highlight ? {
-          background: 'linear-gradient(135deg, var(--naaloo-blue-subtle), #e0ecff)',
-          border: '1.5px solid var(--naaloo-blue)',
-          fontSize: '17px',
+          background: 'linear-gradient(135deg, #EEF3FB 0%, #E0E7FF 100%)',
+          border: '1.5px solid var(--naaloo-accent)',
+          fontSize: '18px',
+          color: 'var(--naaloo-blue-dark)',
+          boxShadow: '0 4px 12px rgba(74, 144, 226, 0.1)'
         } : {}}
       >
         {value}

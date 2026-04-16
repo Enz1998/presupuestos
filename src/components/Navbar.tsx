@@ -1,11 +1,14 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Navbar() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+
+  // Cerrar menú al cambiar de ruta
+  useEffect(() => setIsOpen(false), [pathname])
 
   const handleLogout = async () => {
     const { createClient } = await import('@/utils/supabase/client')
@@ -15,23 +18,24 @@ export default function Navbar() {
   }
 
   return (
-    <header className="bg-[var(--naaloo-blue-dark)] border-b border-white/10 h-16 sticky top-0 z-50 backdrop-blur-md">
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6 w-full h-full flex items-center justify-between">
+    <header className="bg-[var(--naaloo-blue-dark)]/95 border-b border-white/5 h-16 sticky top-0 z-[100] backdrop-blur-md">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-6 w-full h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 no-underline">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-base text-white bg-gradient-to-br from-[#4A90E2] to-[#2D5FCC]">
+        <Link href="/" className="flex items-center gap-3 no-underline group">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-lg text-white bg-gradient-to-br from-blue-400 to-blue-700 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
             N
           </div>
           <div>
-            <div className="text-white font-bold text-[15px] leading-tight">Naaloo</div>
-            <div className="text-white/50 text-[10px] tracking-widest uppercase">Presupuestos</div>
+            <div className="text-white font-bold text-[16px] leading-tight tracking-tight">Naaloo</div>
+            <div className="text-white/40 text-[9px] tracking-[0.15em] uppercase font-medium">Presupuestos</div>
           </div>
         </Link>
 
         {/* Mobile menu button */}
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 text-white/80 hover:text-white"
+          className="md:hidden p-2.5 rounded-xl bg-white/5 text-white/80 hover:text-white transition-colors"
+          aria-label="Menu"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {isOpen ? (
@@ -43,39 +47,39 @@ export default function Navbar() {
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1.5">
           <NavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} />
           <NavLink href="/rangos" label="Rangos de Precio" active={pathname === '/rangos'} />
           <NavLink href="/historial" label="Historial" active={pathname === '/historial'} />
           
-          <div className="w-px h-6 bg-white/20 mx-2"></div>
+          <div className="w-px h-5 bg-white/10 mx-3"></div>
           
           <button 
             onClick={handleLogout}
-            className="px-3.5 py-1.5 rounded-md text-xs font-medium bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/20 transition-colors ml-2"
+            className="px-4 py-2 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all active:scale-95"
           >
-            Salir
+            Cerrar sesión
           </button>
         </nav>
       </div>
 
-      {/* Mobile Navigation Dropdown */}
-      {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-[var(--naaloo-blue-dark)] border-b border-white/10 shadow-lg py-4 px-4 flex flex-col gap-2">
-          <MobileNavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} onClick={() => setIsOpen(false)} />
-          <MobileNavLink href="/rangos" label="Rangos de Precio" active={pathname === '/rangos'} onClick={() => setIsOpen(false)} />
-          <MobileNavLink href="/historial" label="Historial" active={pathname === '/historial'} onClick={() => setIsOpen(false)} />
+      {/* Mobile Navigation - Overlay mejorado */}
+      <div className={`fixed inset-0 top-16 bg-[var(--naaloo-blue-dark)]/98 backdrop-blur-xl z-[90] transition-all duration-300 md:hidden ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className="p-6 flex flex-col gap-3">
+          <MobileNavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} />
+          <MobileNavLink href="/rangos" label="Rangos de Precio" active={pathname === '/rangos'} />
+          <MobileNavLink href="/historial" label="Historial" active={pathname === '/historial'} />
           
-          <div className="h-px w-full bg-white/10 my-2"></div>
+          <div className="h-px w-full bg-white/5 my-4"></div>
           
           <button 
             onClick={handleLogout}
-            className="w-full text-left px-4 py-2.5 rounded-md text-sm font-medium bg-red-500/10 text-red-300 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-base font-bold bg-red-500/10 text-red-400 border border-red-500/10"
           >
-            Salir
+            <span>⎋</span> Cerrar sesión
           </button>
         </div>
-      )}
+      </div>
     </header>
   )
 }
@@ -84,10 +88,10 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
   return (
     <Link
       href={href}
-      className={`px-4 py-1.5 rounded-md text-[13px] font-medium no-underline transition-all duration-150 ${
+      className={`px-4 py-2 rounded-lg text-[13px] font-semibold no-underline transition-all ${
         active 
-          ? 'text-white bg-white/10' 
-          : 'text-white/60 hover:text-white hover:bg-white/5'
+          ? 'text-white bg-white/10 shadow-inner' 
+          : 'text-white/50 hover:text-white hover:bg-white/5'
       }`}
     >
       {label}
@@ -95,18 +99,18 @@ function NavLink({ href, label, active }: { href: string; label: string; active:
   )
 }
 
-function MobileNavLink({ href, label, active, onClick }: { href: string; label: string; active: boolean, onClick: () => void }) {
+function MobileNavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
   return (
     <Link
       href={href}
-      onClick={onClick}
-      className={`px-4 py-2.5 rounded-md text-sm font-medium no-underline transition-all duration-150 ${
+      className={`flex items-center justify-between px-6 py-5 rounded-2xl text-lg font-semibold no-underline transition-all ${
         active 
-          ? 'text-white bg-white/10' 
-          : 'text-white/70 hover:text-white hover:bg-white/5'
+          ? 'text-white bg-white/10 border border-white/10' 
+          : 'text-white/60 bg-white/[0.02]'
       }`}
     >
-      {label}
+      <span>{label}</span>
+      {active && <span className="text-blue-400">→</span>}
     </Link>
   )
 }
