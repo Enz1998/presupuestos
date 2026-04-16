@@ -156,7 +156,7 @@ export default function RangosPage() {
 
   return (
     <div className="max-w-[1000px] mx-auto px-6 md:px-8">
-      <div className="mb-10 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+      <div className="mb-10 flex flex-col md:flex-row md:justify-between md:items-end gap-6 pt-4 md:pt-0">
         <div>
           <h1 className="text-2xl md:text-[26px] font-bold text-[var(--naaloo-text)] mb-1 md:mb-1.5">
             Rangos de Precio

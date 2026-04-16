@@ -143,10 +143,10 @@ export default function HomePage() {
   }, [nombreEmpresa, cantidadUsuarios, valorLicencia, descuentoPct, descuentoMeses, fecha, rangoActivo])
 
   return (
-    <div className="max-w-[1100px] mx-auto px-5 md:px-8">
+    <div className="max-w-[1100px] mx-auto px-6 md:px-8">
       {/* Header */}
-      <div className="mb-8 md:mb-12">
-        <h1 className="text-xl md:text-3xl font-extrabold text-[var(--naaloo-text)] mb-2 tracking-tight">
+      <div className="mb-10 md:mb-12 pt-4 md:pt-0">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-[var(--naaloo-text)] mb-3 tracking-tight">
           Nueva Propuesta Comercial
         </h1>
         <p className="text-sm md:text-base text-[var(--naaloo-gray-600)] leading-relaxed max-w-2xl">
