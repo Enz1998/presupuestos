@@ -143,9 +143,9 @@ export default function HomePage() {
   }, [nombreEmpresa, cantidadUsuarios, valorLicencia, descuentoPct, descuentoMeses, fecha, rangoActivo])
 
   return (
-    <div className="max-w-[1100px] mx-auto px-4 md:px-6">
+    <div className="max-w-[1100px] mx-auto px-6 md:px-8">
       {/* Header */}
-      <div className="mb-6 md:mb-8">
+      <div className="mb-10 md:mb-12">
         <h1 className="text-2xl md:text-[26px] font-bold text-[var(--naaloo-text)] mb-1 md:mb-1.5">
           Nueva Propuesta Comercial
         </h1>
