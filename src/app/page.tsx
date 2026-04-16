@@ -143,7 +143,6 @@ export default function HomePage() {
   }, [nombreEmpresa, cantidadUsuarios, valorLicencia, descuentoPct, descuentoMeses, fecha, rangoActivo])
 
   return (
-  return (
     <div className="max-w-[1100px] mx-auto px-4 md:px-6">
       {/* Header */}
       <div className="mb-6 md:mb-8">
