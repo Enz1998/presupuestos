@@ -176,10 +176,17 @@ export default function HistorialPage() {
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <a 
                           href={`/api/download/${p.id}`} 
-                          title="Descargar PDF"
+                          title="Descargar PPTX"
                           className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-slate-800)] hover:bg-[var(--naaloo-slate-200)] rounded transition-all"
                         >
                           <Download size={16} />
+                        </a>
+                        <a 
+                          href={`/api/download/${p.id}?format=pdf`} 
+                          title="Descargar PDF"
+                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-slate-800)] hover:bg-[var(--naaloo-slate-200)] rounded transition-all"
+                        >
+                          <FileText size={16} />
                         </a>
                         <button 
                           onClick={() => handleDelete(p.id)} 

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { RangoPrecio, findRangoForUsuarios, roundToNearest10 } from '@/lib/supabase'
-import { Building2, Key, BarChart3, FileText } from 'lucide-react'
+import { Building2, Key, BarChart3, FileText, Download } from 'lucide-react'
 
 import useSWR from 'swr'
 
@@ -61,6 +61,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [generatedId, setGeneratedId] = useState<string | null>(null)
 
   // Auto-selection when usuarios change
   useEffect(() => {
@@ -149,13 +150,13 @@ export default function HomePage() {
 
       const presupuestoId = res.headers.get('X-Presupuesto-Id');
       if (presupuestoId) {
-        window.location.href = `/api/download/${presupuestoId}`;
+        setGeneratedId(presupuestoId)
       } else {
         const data = await res.json();
-        window.location.href = `/api/download/${data.id}`;
+        setGeneratedId(data.id)
       }
       setSuccess(true)
-      setTimeout(() => setSuccess(false), 5000)
+      // No redirect anymore, we show download buttons
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error inesperado')
     } finally {
@@ -292,13 +293,42 @@ export default function HomePage() {
               </div>
             </div>
             {error && <div className="alert alert-error mb-3 py-1.5 text-[11px]"><span>⚠</span> {error}</div>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#475569] hover:bg-[#334155] text-white font-medium text-[14px] py-2.5 rounded-md flex items-center justify-center gap-2 transition-colors flex-shrink-0 mt-auto"
-            >
-              {loading ? <><div className="spinner w-3 h-3" /> Generando...</> : <><FileText size={16} /> Generar Presupuesto</>}
-            </button>
+            
+            {!success ? (
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#475569] hover:bg-[#334155] text-white font-medium text-[14px] py-2.5 rounded-md flex items-center justify-center gap-2 transition-colors flex-shrink-0 mt-auto"
+              >
+                {loading ? <><div className="spinner w-3 h-3" /> Generando...</> : <><FileText size={16} /> Generar Presupuesto</>}
+              </button>
+            ) : (
+              <div className="flex flex-col gap-2 mt-auto animate-fadein">
+                <div className="alert alert-success py-2 text-[12px] mb-1">
+                  <span>✓</span> Presupuesto generado con éxito
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <a
+                    href={`/api/download/${generatedId}`}
+                    className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <Download size={14} /> PPTX
+                  </a>
+                  <a
+                    href={`/api/download/${generatedId}?format=pdf`}
+                    className="flex-1 bg-[var(--naaloo-slate-100)] hover:bg-[var(--naaloo-slate-200)] text-[var(--naaloo-slate-700)] font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors border border-[var(--naaloo-slate-200)]"
+                  >
+                    <FileText size={14} /> PDF
+                  </a>
+                </div>
+                <button 
+                  onClick={() => { setSuccess(false); setGeneratedId(null); }}
+                  className="text-[11px] text-[var(--naaloo-slate-400)] hover:text-[var(--naaloo-slate-600)] transition-colors mt-1"
+                >
+                  Generar otro
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Price Ranges Card (Appears after Summary on mobile) */}

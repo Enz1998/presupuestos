@@ -11,6 +11,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.2",
+    "convertapi": "^1.15.0",
     "date-fns": "^4.1.0",
     "jszip": "^3.10.1",
     "libreoffice-convert": "^1.8.1",
@@ -19,6 +20,7 @@
     "puppeteer": "^24.41.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "resend": "^6.12.0",
     "swr": "^2.4.1"
   },
   "devDependencies": {
