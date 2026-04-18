@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { RangoPrecio } from '@/lib/supabase'
 
 function formatPeso(v: number | string) {
@@ -18,9 +19,12 @@ const EMPTY_FORM = {
   valor_unitario: '', // Usamos valor_unitario internamente
 }
 
+const fetcher = (url: string) => fetch(url).then(r => r.json());
+
 export default function RangosPage() {
-  const [rangos, setRangos] = useState<RangoPrecio[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: rangosData, isLoading: loading, mutate } = useSWR('/api/rangos', fetcher);
+  const rangos: RangoPrecio[] = Array.isArray(rangosData) ? rangosData : [];
+
   const [saving, setSaving] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
@@ -31,19 +35,8 @@ export default function RangosPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const loadRangos = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/rangos')
-      const data = await res.json()
-      setRangos(Array.isArray(data) ? data : [])
-    } catch {
-      showFeedback('error', 'Error al cargar los rangos')
-    } finally {
-      setLoading(false)
-    }
+    await mutate();
   }
-
-  useEffect(() => { loadRangos() }, [])
 
   const showFeedback = (type: 'success' | 'error', msg: string) => {
     setFeedback({ type, msg })

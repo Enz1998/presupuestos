@@ -32,51 +32,59 @@ export default function Navbar() {
           </Link>
 
           {/* Hamburger Button - Asegurando área de toque */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden w-10 h-10 flex items-center justify-end text-white/80 hover:text-white transition-colors z-[120]"
-            aria-label="Abrir menú"
-          >
-            <div className="relative w-6 h-5">
-              <span className={`absolute block h-0.5 w-6 bg-current transform transition duration-300 ease-in-out ${isOpen ? 'rotate-45 translate-y-2' : ''}`} />
-              <span className={`absolute block h-0.5 w-6 bg-current transform transition duration-300 ease-in-out top-2 ${isOpen ? 'opacity-0' : ''}`} />
-              <span className={`absolute block h-0.5 w-6 bg-current transform transition duration-300 ease-in-out top-4 ${isOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-            </div>
-          </button>
+          {pathname !== '/login' && (
+            <button 
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden w-10 h-10 flex items-center justify-end text-white/80 hover:text-white transition-colors z-[120]"
+              aria-label="Abrir menú"
+            >
+              <div className="relative w-6 h-5">
+                <span className={`absolute block h-0.5 w-6 bg-current transform transition duration-300 ease-in-out ${isOpen ? 'rotate-45 translate-y-2' : ''}`} />
+                <span className={`absolute block h-0.5 w-6 bg-current transform transition duration-300 ease-in-out top-2 ${isOpen ? 'opacity-0' : ''}`} />
+                <span className={`absolute block h-0.5 w-6 bg-current transform transition duration-300 ease-in-out top-4 ${isOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+              </div>
+            </button>
+          )}
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            <NavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} />
-            <NavLink href="/rangos" label="Rangos de Precio" active={pathname === '/'} />
-            <NavLink href="/historial" label="Historial" active={pathname === '/historial'} />
-            <div className="w-px h-5 bg-white/10 mx-3"></div>
-            <button onClick={handleLogout} className="px-4 py-2 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all">
-              Salir
-            </button>
-          </nav>
+          {pathname !== '/login' && (
+            <nav className="hidden md:flex items-center gap-1">
+              <NavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} />
+              <NavLink href="/rangos" label="Rangos de Precio" active={pathname === '/rangos'} />
+              <NavLink href="/historial" label="Historial" active={pathname === '/historial'} />
+              <div className="w-px h-5 bg-white/10 mx-3"></div>
+              <button onClick={handleLogout} className="px-4 py-2 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all">
+                Salir
+              </button>
+            </nav>
+          )}
         </div>
       </header>
 
       {/* Mobile Sidebar - Más serio y funcional */}
-      <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] transition-opacity duration-300 md:hidden ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsOpen(false)} />
-      
-      <aside className={`fixed top-0 right-0 w-[280px] h-full bg-[var(--naaloo-blue-dark)] z-[115] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="p-8 pt-24 flex flex-col gap-4">
-          <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Navegación</p>
-          <MobileNavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} />
-          <MobileNavLink href="/rangos" label="Rangos de Precio" active={pathname === '/rangos'} />
-          <MobileNavLink href="/historial" label="Historial" active={pathname === '/historial'} />
+      {pathname !== '/login' && (
+        <>
+          <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] transition-opacity duration-300 md:hidden ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsOpen(false)} />
           
-          <div className="mt-auto pt-10">
-            <button 
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-sm font-bold bg-white/5 text-red-400 border border-white/5"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
-        </div>
-      </aside>
+          <aside className={`fixed top-0 right-0 w-[280px] h-full bg-[var(--naaloo-blue-dark)] z-[115] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className="p-8 pt-24 flex flex-col gap-4">
+              <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] mb-2">Navegación</p>
+              <MobileNavLink href="/" label="Nuevo Presupuesto" active={pathname === '/'} />
+              <MobileNavLink href="/rangos" label="Rangos de Precio" active={pathname === '/rangos'} />
+              <MobileNavLink href="/historial" label="Historial" active={pathname === '/historial'} />
+              
+              <div className="mt-auto pt-10">
+                <button 
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-sm font-bold bg-white/5 text-red-400 border border-white/5"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
+            </div>
+          </aside>
+        </>
+      )}
     </>
   )
 }

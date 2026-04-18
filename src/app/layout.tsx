@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Navbar from '@/components/Navbar'
+import Sidebar from '@/components/Sidebar'
 
 export const metadata: Metadata = {
-  title: 'Naaloo | Generador de Presupuestos',
-  description: 'Automatización de propuestas comerciales para Naaloo',
+  title: 'Fiscal Architect | Generador de Presupuestos',
+  description: 'Sistema corporativo de presupuestos',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,14 +14,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body>
-        <Navbar />
-        <main className="min-h-[calc(100vh-64px)] pt-6 pb-16 md:pt-8">
-          {children}
+      <body className="flex h-screen overflow-hidden bg-[var(--naaloo-slate-50)] text-[var(--naaloo-text)]">
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto w-full p-4 pt-24 md:p-10">
+          <div className="max-w-[1100px] mx-auto w-full">
+            {children}
+          </div>
         </main>
       </body>
     </html>

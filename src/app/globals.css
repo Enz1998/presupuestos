@@ -1,41 +1,45 @@
 @import "tailwindcss";
 
-
 :root {
-  --naaloo-blue: #1B3F8B;
-  --naaloo-blue-light: #2D5FCC;
-  --naaloo-blue-dark: #0F2557;
-  --naaloo-blue-subtle: #EEF3FB;
-  --naaloo-accent: #4A90E2;
+  /* Slate & Gray Palette for 'Fiscal Architect' look */
+  --naaloo-slate-50: #F8FAFC;
+  --naaloo-slate-100: #F1F5F9;
+  --naaloo-slate-200: #E2E8F0;
+  --naaloo-slate-500: #64748B;
+  --naaloo-slate-700: #334155;
+  --naaloo-slate-800: #1E293B;
+  
+  --naaloo-blue-dark: #2D3748; /* For the button and text */
   --naaloo-white: #FFFFFF;
-  --naaloo-gray-50: #F8FAFF;
-  --naaloo-gray-100: #F0F4FC;
-  --naaloo-gray-200: #DDE5F5;
-  --naaloo-gray-400: #94A3B8;
-  --naaloo-gray-600: #475569;
-  --naaloo-text: #1A2B4A;
+  --naaloo-text: #2D3748;
+  --naaloo-text-muted: #718096;
+
+  /* Aliasing to old names so we don't break everything instantly */
+  --naaloo-blue: var(--naaloo-slate-700);
+  --naaloo-blue-light: var(--naaloo-slate-500);
+  --naaloo-blue-subtle: var(--naaloo-slate-100);
+  --naaloo-accent: var(--naaloo-slate-500);
+  --naaloo-gray-50: var(--naaloo-slate-50);
+  --naaloo-gray-100: var(--naaloo-slate-100);
+  --naaloo-gray-200: var(--naaloo-slate-200);
+  --naaloo-gray-400: #A0AEC0;
+  --naaloo-gray-600: var(--naaloo-text-muted);
+
   --naaloo-success: #10B981;
   --naaloo-warning: #F59E0B;
   --naaloo-error: #EF4444;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --shadow-sm: 0 1px 3px rgba(27, 63, 139, 0.08);
-  --shadow-md: 0 4px 16px rgba(27, 63, 139, 0.12);
-  --shadow-lg: 0 8px 32px rgba(27, 63, 139, 0.16);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Use tailwind preflight for resets */
 
-html,
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--naaloo-gray-50);
+html, body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--naaloo-slate-50);
   color: var(--naaloo-text);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
@@ -45,55 +49,50 @@ body {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--naaloo-gray-100); }
 ::-webkit-scrollbar-thumb { background: var(--naaloo-gray-200); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--naaloo-blue-light); }
+::-webkit-scrollbar-thumb:hover { background: var(--naaloo-slate-500); }
 
-/* ── Cards ──────────────────────────────────────────────────────────────── */
+/* ── Cards (Right Panels & Main Containers) ─────────────────────────────── */
 .card {
   background: var(--naaloo-white);
-  border-radius: var(--radius-xl);
-  border: 1px solid rgba(27, 63, 139, 0.05);
-  box-shadow: 
-    0 1px 2px rgba(27, 63, 139, 0.02),
-    0 4px 12px rgba(27, 63, 139, 0.03);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   padding: 24px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 @media (max-width: 768px) {
-  .card { padding: 20px; border-radius: var(--radius-lg); }
+  .card { padding: 20px; border-radius: var(--radius-md); }
 }
-.card:hover { 
-  box-shadow: 
-    0 4px 6px rgba(27, 63, 139, 0.04),
-    0 12px 24px rgba(27, 63, 139, 0.08);
-  transform: translateY(-2px);
+
+/* ── Nested Panels (Left Column like Client Data) ───────────────────────── */
+.panel-soft {
+  background: var(--naaloo-slate-50);
+  border-radius: var(--radius-xl);
+  padding: 24px;
 }
 
 /* ── Form inputs ────────────────────────────────────────────────────────── */
 .input {
   width: 100%;
-  padding: 12px 16px;
-  border: 1.5px solid var(--naaloo-gray-100);
-  border-radius: var(--radius-md);
-  font-size: 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--naaloo-slate-200);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
   font-family: inherit;
   color: var(--naaloo-text);
-  background: var(--naaloo-gray-50);
+  background: var(--naaloo-white);
   transition: all 0.2s ease;
   outline: none;
 }
 .input:focus {
-  background: var(--naaloo-white);
-  border-color: var(--naaloo-blue-light);
-  box-shadow: 0 0 0 4px rgba(45, 95, 204, 0.08);
+  border-color: var(--naaloo-slate-500);
+  box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.1);
 }
 .input-label {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--naaloo-gray-600);
-  margin-bottom: 8px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--naaloo-slate-500);
+  margin-bottom: 6px;
 }
 .input-hint {
   font-size: 11px;
@@ -106,69 +105,102 @@ body {
 .btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
-  background: linear-gradient(135deg, var(--naaloo-blue) 0%, var(--naaloo-blue-light) 100%);
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--naaloo-slate-700);
   color: white;
   border: none;
-  border-radius: var(--radius-md);
-  font-size: 15px;
-  font-weight: 600;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(27, 63, 139, 0.2);
 }
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(27, 63, 139, 0.3);
+  background: var(--naaloo-slate-800);
 }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--naaloo-white);
+  color: var(--naaloo-slate-700);
+  border: 1px solid var(--naaloo-slate-200);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--naaloo-slate-50);
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #FEF2F2;
+  color: var(--naaloo-error);
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-danger:hover {
+  background: #FEE2E2;
+}
+
 
 /* ── Badge ──────────────────────────────────────────────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
-  border-radius: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 600;
 }
+.badge-blue { background: var(--naaloo-slate-100); color: var(--naaloo-slate-700); }
 
 /* ── Table ──────────────────────────────────────────────────────────────── */
 .table-wrapper {
   overflow-x: auto;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--naaloo-gray-100);
 }
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13px;
 }
-thead { background: var(--naaloo-gray-50); }
+thead { background: var(--naaloo-slate-100); }
 th {
-  padding: 14px 20px;
+  padding: 12px 16px;
   text-align: left;
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--naaloo-gray-400);
-  border-bottom: 1px solid var(--naaloo-gray-100);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--naaloo-slate-500);
+  border-bottom: 1px solid var(--naaloo-slate-200);
 }
 td {
-  padding: 16px 20px;
+  padding: 14px 16px;
   color: var(--naaloo-text);
-  border-bottom: 1px solid var(--naaloo-gray-50);
+  border-bottom: 1px solid var(--naaloo-slate-100);
 }
-tr:hover td { background: var(--naaloo-gray-50)/50; }
+tr:hover td { background: var(--naaloo-slate-50); }
 
 /* ── Highlight row ──────────────────────────────────────────────────────── */
 .row-highlight td {
-  background: var(--naaloo-blue-subtle) !important;
+  background: var(--naaloo-slate-50) !important;
+  font-weight: 500;
 }
 
 /* ── Alert/Toast ────────────────────────────────────────────────────────── */
@@ -183,21 +215,22 @@ tr:hover td { background: var(--naaloo-gray-50)/50; }
 }
 .alert-success { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
 .alert-error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
-.alert-info { background: var(--naaloo-blue-subtle); color: var(--naaloo-blue-dark); border: 1px solid var(--naaloo-gray-200); }
+.alert-info { background: var(--naaloo-slate-100); color: var(--naaloo-slate-700); border: 1px solid var(--naaloo-slate-200); }
 
 /* ── Section divider ────────────────────────────────────────────────────── */
 .section-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--naaloo-gray-400);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--naaloo-slate-800);
   margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 /* ── Animations ─────────────────────────────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes spin {
