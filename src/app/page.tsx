@@ -326,7 +326,7 @@ export default function HomePage() {
                     {rangos.filter(r => r.activo).map((r, idx) => (
                       <tr 
                         key={r.id} 
-                        ref={el => rangeRefs.current[r.id] = el}
+                        ref={el => { rangeRefs.current[r.id] = el; }}
                         className={`cursor-pointer transition-colors ${rangoActivo?.id === r.id ? 'bg-[#F1F5F9]' : 'hover:bg-slate-50'} ${idx !== 0 ? 'border-t border-[#F1F5F9]' : ''}`}
                         onClick={() => {
                           setRangoActivo(r)
