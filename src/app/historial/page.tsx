@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
 import { Presupuesto } from '@/lib/supabase'
-import { Search, Download, Trash2, FileText, CheckSquare, Square } from 'lucide-react'
+import { Search, Download, Trash2, FileText, CheckSquare, Square, Mail } from 'lucide-react'
+import EmailModal from '@/components/EmailModal'
 
 function formatPeso(v: number) {
   return Math.round(v).toLocaleString('es-AR').replace(/,/g, '.')
@@ -17,6 +18,15 @@ export default function HistorialPage() {
 
   // Selección múltiple
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+  // Modal de email
+  const [emailModalOpen, setEmailModalOpen] = useState(false)
+  const [emailData, setEmailData] = useState<{ id: string, empresa: string } | null>(null)
+
+  const handleOpenEmail = (id: string, empresa: string) => {
+    setEmailData({ id, empresa })
+    setEmailModalOpen(true)
+  }
 
   const loadHistorial = async (query = '') => {
     // SWR already updates when `q` state changes, but we can call mutate to force refresh if needed
@@ -174,6 +184,13 @@ export default function HistorialPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={() => handleOpenEmail(p.id, p.nombre_empresa)} 
+                          title="Enviar por Correo"
+                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[#00B2FF] hover:bg-[#E6F4FA] rounded transition-all"
+                        >
+                          <Mail size={16} />
+                        </button>
                         <a 
                           href={`/api/download/${p.id}`} 
                           title="Descargar PPTX"
@@ -204,6 +221,13 @@ export default function HistorialPage() {
           </table>
         </div>
       </div>
+
+      <EmailModal 
+        isOpen={emailModalOpen} 
+        onClose={() => setEmailModalOpen(false)} 
+        presupuestoId={emailData?.id ?? null} 
+        empresa={emailData?.empresa ?? ''} 
+      />
     </div>
   )
 }

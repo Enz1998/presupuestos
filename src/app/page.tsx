@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { RangoPrecio, findRangoForUsuarios, roundToNearest10 } from '@/lib/supabase'
-import { Building2, Key, BarChart3, FileText, Download } from 'lucide-react'
+import { Building2, Key, BarChart3, FileText, Download, Mail } from 'lucide-react'
+import EmailModal from '@/components/EmailModal'
 
 import useSWR from 'swr'
 
@@ -62,6 +63,7 @@ export default function HomePage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [generatedId, setGeneratedId] = useState<string | null>(null)
+  const [emailModalOpen, setEmailModalOpen] = useState(false)
 
   // Auto-selection when usuarios change
   useEffect(() => {
@@ -307,7 +309,14 @@ export default function HomePage() {
                 <div className="alert alert-success py-2 text-[12px] mb-1">
                   <span>✓</span> Presupuesto generado con éxito
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEmailModalOpen(true)}
+                    className="flex-1 bg-[#00B2FF] hover:bg-[#008FCC] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors shadow-sm"
+                  >
+                    <Mail size={14} /> Correo
+                  </button>
                   <a
                     href={`/api/download/${generatedId}`}
                     className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
@@ -379,6 +388,13 @@ export default function HomePage() {
           </div>
         </div>
       </form>
+
+      <EmailModal 
+        isOpen={emailModalOpen} 
+        onClose={() => setEmailModalOpen(false)} 
+        presupuestoId={generatedId} 
+        empresa={nombreEmpresa} 
+      />
     </div>
   )
 }

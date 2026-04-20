@@ -75,17 +75,25 @@ export async function generatePptx(data: PptxData): Promise<Buffer> {
       `<a:t>${formatPeso(data.recursoExcedente)}</a:t>`
     )
 
-    // Descuento porcentaje: <a:t>25</a:t>
-    xml6 = xml6.replace(
-      '<a:t>25</a:t>',
-      `<a:t>${data.descuentoPorcentaje}</a:t>`
-    )
+    if (!data.descuentoPorcentaje || data.descuentoPorcentaje === 0) {
+      // Si no hay descuento, borrar cartelitos, precios tachados y recuadros (147, 148, 149, 150, 151)
+      xml6 = xml6.replace(
+        /<p:(sp|cxnSp)>(?:(?!<\/p:(sp|cxnSp)>)[\s\S])*?<p:cNvPr[^>]*?id="(?:147|148|149|150|151)"[^>]*?>(?:(?!<\/p:(sp|cxnSp)>)[\s\S])*?<\/p:(sp|cxnSp)>/g,
+        ''
+      )
+    } else {
+      // Descuento porcentaje: <a:t>25</a:t>
+      xml6 = xml6.replace(
+        '<a:t>25</a:t>',
+        `<a:t>${data.descuentoPorcentaje}</a:t>`
+      )
 
-    // Descuento meses: <a:t> 6</a:t>
-    xml6 = xml6.replace(
-      '<a:t> 6</a:t>',
-      `<a:t> ${data.descuentoMeses}</a:t>`
-    )
+      // Descuento meses: <a:t> 6</a:t>
+      xml6 = xml6.replace(
+        '<a:t> 6</a:t>',
+        `<a:t> ${data.descuentoMeses}</a:t>`
+      )
+    }
 
     // Valor total mensual: <a:t>342.210 </a:t>
     xml6 = xml6.replace(
