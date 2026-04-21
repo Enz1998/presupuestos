@@ -18,6 +18,8 @@ export async function GET(
     const { searchParams } = new URL(req.url)
     const exportFormat = searchParams.get('format') || 'pptx'
 
+    console.log(`Backend: Descarga solicitada para ID: ${id}, Formato: ${exportFormat}`)
+
     const supabase = await createClient()
 
     // 1. Obtener los datos del presupuesto de Supabase
@@ -28,8 +30,11 @@ export async function GET(
       .single()
 
     if (error || !p) {
+      console.error(`Backend: Error al buscar ID ${id}:`, error)
       return NextResponse.json({ error: 'Presupuesto no encontrado' }, { status: 404 })
     }
+
+    console.log(`Backend: Generando para empresa: ${p.nombre_empresa}, Versión: ${p.version}`)
 
     // 2. Formatear fecha para el PPTX: "2026-04-15" → "15/04/26"
     const fechaDate = new Date(p.fecha_propuesta + 'T12:00:00')

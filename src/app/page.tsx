@@ -151,186 +151,193 @@ export default function HomePage() {
         throw new Error(data.error || 'Error al generar el presupuesto')
       }
 
-      const presupuestoId = res.headers.get('X-Presupuesto-Id');
-      if (presupuestoId) {
-        setGeneratedId(presupuestoId)
-      } else {
-        const data = await res.json();
-        setGeneratedId(data.id)
+        const presupuestoId = res.headers.get('X-Presupuesto-Id');
+        console.log('Frontend: ID recibido del header:', presupuestoId);
+        if (presupuestoId) {
+          setGeneratedId(presupuestoId)
+        } else {
+          const data = await res.json();
+          console.log('Frontend: ID recibido del body:', data.id);
+          setGeneratedId(data.id)
+        }
+        setSuccess(true)
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Error inesperado')
+      } finally {
+        setLoading(false)
       }
-      setSuccess(true)
-      // No redirect anymore, we show download buttons
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error inesperado')
-    } finally {
-      setLoading(false)
-    }
-  }, [nombreEmpresa, cantidadUsuarios, valorLicenciaRaw, descuentoPct, descuentoMeses, fecha, rangoActivo])
-
-  return (
-    <div className="flex flex-col h-full md:max-h-[85vh]">
-      <div className="mb-4 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-[var(--naaloo-slate-800)] mb-0.5 tracking-tight">
-          Nueva Propuesta Comercial
-        </h1>
-        <p className="text-[var(--naaloo-slate-500)] text-[13px]">
-          Configure client details, licensing, and pricing tiers below.
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4 items-stretch flex-1 min-h-0">
-        
-        {/* LEFT COLUMN: Data Entry */}
-        <div className="flex flex-col gap-4 overflow-y-auto pr-1">
-          {/* Client Data Module */}
-          <div className="panel-soft p-4 flex-shrink-0">
-            <h2 className="section-title text-[14px] mb-3">
-              <Building2 size={16} className="text-[var(--naaloo-slate-500)]" />
-              Client Data
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="input-label text-[12px]" htmlFor="nombre_empresa">Nombre de Empresa</label>
-                <input
-                  id="nombre_empresa"
-                  type="text"
-                  className="input shadow-sm py-1.5"
-                  placeholder="Ej. Acme Corp"
-                  value={nombreEmpresa}
-                  onChange={(e) => setNombreEmpresa(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label className="input-label text-[12px]" htmlFor="fecha_propuesta">Fecha de la Propuesta</label>
-                <input
-                  id="fecha_propuesta"
-                  type="date"
-                  className="input shadow-sm py-1.5"
-                  value={fecha}
-                  onChange={(e) => setFecha(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* License Section Module */}
-          <div className="panel-soft p-4 flex-shrink-0">
-            <h2 className="section-title text-[14px] mb-3">
-              <Key size={16} className="text-[var(--naaloo-slate-500)]" />
-              License Section
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="input-label text-[12px]" htmlFor="cantidad_usuarios">Cantidad de Usuarios</label>
-                <input
-                  id="cantidad_usuarios"
-                  type="number"
-                  className="input shadow-sm py-1.5"
-                  min={1}
-                  value={cantidadUsuarios}
-                  onChange={(e) => setCantidadUsuarios(parseInt(e.target.value) || '')}
-                />
-              </div>
-              <div>
-                <label className="input-label text-[12px]" htmlFor="valor_licencia">Valor Licencia Mensual</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--naaloo-slate-500)] font-medium">$</span>
-                  <input
-                    id="valor_licencia"
-                    type="text"
-                    className="input shadow-sm !pl-10 py-1.5"
-                    value={valorLicenciaDisplay}
-                    onChange={handleValorLicenciaChange}
-                    placeholder="0,00"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="input-label text-[12px]" htmlFor="descuento_pct">Descuento (%)</label>
-                <div className="relative">
-                  <input
-                    id="descuento_pct"
-                    type="number"
-                    className="input shadow-sm pr-7 py-1.5"
-                    min={0}
-                    max={100}
-                    value={descuentoPct}
-                    onChange={(e) => setDescuentoPct(parseFloat(e.target.value) || 0)}
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--naaloo-slate-500)] text-[12px]">%</span>
-                </div>
-              </div>
-              <div>
-                <label className="input-label text-[12px]" htmlFor="descuento_meses">Meses con Descuento</label>
-                <input
-                  id="descuento_meses"
-                  type="number"
-                  className="input shadow-sm py-1.5"
-                  min={1}
-                  value={descuentoMeses}
-                  onChange={(e) => setDescuentoMeses(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+    }, [nombreEmpresa, cantidadUsuarios, valorLicenciaRaw, descuentoPct, descuentoMeses, fecha, rangoActivo])
+  
+    return (
+      <div className="flex flex-col h-full md:max-h-[85vh]">
+        <div className="mb-4 flex-shrink-0">
+          <h1 className="text-2xl font-bold text-[var(--naaloo-slate-800)] mb-0.5 tracking-tight">
+            Nueva Propuesta Comercial
+          </h1>
+          <p className="text-[var(--naaloo-slate-500)] text-[13px]">
+            Configure client details, licensing, and pricing tiers below.
+          </p>
         </div>
-
-        {/* RIGHT COLUMN: Summary & Refs */}
-        <div className="flex flex-col gap-4 overflow-y-auto pr-1">
-          {/* Summary Card (Appears before Rangos on mobile) */}
-          <div className="card p-4 flex-shrink-0 order-1 lg:order-2">
-            <h2 className="section-title mb-4 text-[14px]">Summary</h2>
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-[12px] text-[#64748B] font-medium">Recurso Excedente</span>
-              <span className="text-[13px] text-[#1E293B] font-semibold">${formatDisplay(recursoExcedente)}</span>
-            </div>
-            <div className="bg-[#F1F5F9] rounded-lg p-3 mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-[12px] text-[#1E293B] font-semibold">Total Mensual</p>
-                <p className="text-[10px] text-[#64748B]">con Descuento</p>
-              </div>
-              <div className="text-[20px] font-bold text-[#1E293B] tracking-tight">
-                ${formatDisplay(valorTotal)}
-              </div>
-            </div>
-            {error && <div className="alert alert-error mb-3 py-1.5 text-[11px]"><span>⚠</span> {error}</div>}
-            
-            {!success ? (
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#475569] hover:bg-[#334155] text-white font-medium text-[14px] py-2.5 rounded-md flex items-center justify-center gap-2 transition-colors flex-shrink-0 mt-auto"
-              >
-                {loading ? <><div className="spinner w-3 h-3" /> Generando...</> : <><FileText size={16} /> Generar Presupuesto</>}
-              </button>
-            ) : (
-              <div className="flex flex-col gap-2 mt-auto animate-fadein">
-                <div className="alert alert-success py-2 text-[12px] mb-1">
-                  <span>✓</span> Presupuesto generado con éxito
+  
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4 items-stretch flex-1 min-h-0">
+          
+          {/* LEFT COLUMN: Data Entry */}
+          <div className="flex flex-col gap-4 overflow-y-auto pr-1">
+            {/* Client Data Module */}
+            <div className="panel-soft p-4 flex-shrink-0">
+              <h2 className="section-title text-[14px] mb-3">
+                <Building2 size={16} className="text-[var(--naaloo-slate-500)]" />
+                Client Data
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="input-label text-[12px]" htmlFor="nombre_empresa">Nombre de Empresa</label>
+                  <input
+                    id="nombre_empresa"
+                    type="text"
+                    className="input shadow-sm py-1.5"
+                    placeholder="Ej. Acme Corp"
+                    value={nombreEmpresa}
+                    onChange={(e) => setNombreEmpresa(e.target.value)}
+                    required
+                  />
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setEmailModalOpen(true)}
-                    className="flex-1 bg-[#00B2FF] hover:bg-[#008FCC] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors shadow-sm"
-                  >
-                    <Mail size={14} /> Correo
-                  </button>
-                  <a
-                    href={`/api/download/${generatedId}?t=${Date.now()}`}
-                    className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
-                  >
-                    <Download size={14} /> PPTX
-                  </a>
-                  <a
-                    href={`/api/download/${generatedId}?format=pdf&t=${Date.now()}`}
-                    className="flex-1 bg-[var(--naaloo-slate-100)] hover:bg-[var(--naaloo-slate-200)] text-[var(--naaloo-slate-700)] font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors border border-[var(--naaloo-slate-200)]"
-                  >
-                    <FileText size={14} /> PDF
-                  </a>
+                <div>
+                  <label className="input-label text-[12px]" htmlFor="fecha_propuesta">Fecha de la Propuesta</label>
+                  <input
+                    id="fecha_propuesta"
+                    type="date"
+                    className="input shadow-sm py-1.5"
+                    value={fecha}
+                    onChange={(e) => setFecha(e.target.value)}
+                    required
+                  />
                 </div>
+              </div>
+            </div>
+  
+            {/* License Section Module */}
+            <div className="panel-soft p-4 flex-shrink-0">
+              <h2 className="section-title text-[14px] mb-3">
+                <Key size={16} className="text-[var(--naaloo-slate-500)]" />
+                License Section
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="input-label text-[12px]" htmlFor="cantidad_usuarios">Cantidad de Usuarios</label>
+                  <input
+                    id="cantidad_usuarios"
+                    type="number"
+                    className="input shadow-sm py-1.5"
+                    min={1}
+                    value={cantidadUsuarios}
+                    onChange={(e) => setCantidadUsuarios(parseInt(e.target.value) || '')}
+                  />
+                </div>
+                <div>
+                  <label className="input-label text-[12px]" htmlFor="valor_licencia">Valor Licencia Mensual</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--naaloo-slate-500)] font-medium">$</span>
+                    <input
+                      id="valor_licencia"
+                      type="text"
+                      className="input shadow-sm !pl-10 py-1.5"
+                      value={valorLicenciaDisplay}
+                      onChange={handleValorLicenciaChange}
+                      placeholder="0,00"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="input-label text-[12px]" htmlFor="descuento_pct">Descuento (%)</label>
+                  <div className="relative">
+                    <input
+                      id="descuento_pct"
+                      type="number"
+                      className="input shadow-sm pr-7 py-1.5"
+                      min={0}
+                      max={100}
+                      value={descuentoPct}
+                      onChange={(e) => setDescuentoPct(parseFloat(e.target.value) || 0)}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--naaloo-slate-500)] text-[12px]">%</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="input-label text-[12px]" htmlFor="descuento_meses">Meses con Descuento</label>
+                  <input
+                    id="descuento_meses"
+                    type="number"
+                    className="input shadow-sm py-1.5"
+                    min={1}
+                    value={descuentoMeses}
+                    onChange={(e) => setDescuentoMeses(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          {/* RIGHT COLUMN: Summary & Refs */}
+          <div className="flex flex-col gap-4 overflow-y-auto pr-1">
+            {/* Summary Card (Appears before Rangos on mobile) */}
+            <div className="card p-4 flex-shrink-0 order-1 lg:order-2">
+              <h2 className="section-title mb-4 text-[14px]">Summary</h2>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-[12px] text-[#64748B] font-medium">Recurso Excedente</span>
+                <span className="text-[13px] text-[#1E293B] font-semibold">${formatDisplay(recursoExcedente)}</span>
+              </div>
+              <div className="bg-[#F1F5F9] rounded-lg p-3 mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-[12px] text-[#1E293B] font-semibold">Total Mensual</p>
+                  <p className="text-[10px] text-[#64748B]">con Descuento</p>
+                </div>
+                <div className="text-[20px] font-bold text-[#1E293B] tracking-tight">
+                  ${formatDisplay(valorTotal)}
+                </div>
+              </div>
+              {error && <div className="alert alert-error mb-3 py-1.5 text-[11px]"><span>⚠</span> {error}</div>}
+              
+              {!success ? (
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-[#475569] hover:bg-[#334155] text-white font-medium text-[14px] py-2.5 rounded-md flex items-center justify-center gap-2 transition-colors flex-shrink-0 mt-auto"
+                >
+                  {loading ? <><div className="spinner w-3 h-3" /> Generando...</> : <><FileText size={16} /> Generar Presupuesto</>}
+                </button>
+              ) : (
+                <div key={generatedId || 'success'} className="flex flex-col gap-2 mt-auto animate-fadein">
+                  <div className="alert alert-success py-2 text-[12px] mb-1">
+                    <span>✓</span> Presupuesto generado con éxito
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEmailModalOpen(true)}
+                      className="flex-1 bg-[#00B2FF] hover:bg-[#008FCC] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors shadow-sm"
+                    >
+                      <Mail size={14} /> Correo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.location.href = `/api/download/${generatedId}?t=${Date.now()}`
+                      }}
+                      className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <Download size={14} /> PPTX
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.location.href = `/api/download/${generatedId}?format=pdf&t=${Date.now()}`
+                      }}
+                      className="flex-1 bg-[var(--naaloo-slate-100)] hover:bg-[var(--naaloo-slate-200)] text-[var(--naaloo-slate-700)] font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors border border-[var(--naaloo-slate-200)]"
+                    >
+                      <FileText size={14} /> PDF
+                    </button>
+                  </div>
                 <button 
                   onClick={() => { setSuccess(false); setGeneratedId(null); }}
                   className="text-[11px] text-[var(--naaloo-slate-400)] hover:text-[var(--naaloo-slate-600)] transition-colors mt-1"
