@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import useSWR from 'swr'
 import { Presupuesto } from '@/lib/supabase'
 import { Search, Download, Trash2, FileText, CheckSquare, Square, Mail } from 'lucide-react'
@@ -74,6 +74,29 @@ export default function HistorialPage() {
       setSelectedIds(presupuestos.map(p => p.id))
     }
   }
+
+  // Descarga robusta via fetch + blob
+  const handleDownload = useCallback(async (id: string, format: 'pptx' | 'pdf') => {
+    try {
+      const url = `/api/download/${id}${format === 'pdf' ? '?format=pdf' : ''}`
+      const res = await fetch(url, { cache: 'no-store' })
+      if (!res.ok) throw new Error('Error al descargar')
+      const blob = await res.blob()
+      const disposition = res.headers.get('Content-Disposition') || ''
+      const filenameMatch = disposition.match(/filename="?([^"]+)"?/)
+      const filename = filenameMatch ? filenameMatch[1] : `presupuesto.${format}`
+      const blobUrl = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(blobUrl)
+    } catch (err) {
+      alert('Error al descargar el archivo')
+    }
+  }, [])
 
   return (
     <div className="flex flex-col gap-6 h-full md:max-h-[90vh]">
@@ -191,20 +214,20 @@ export default function HistorialPage() {
                         >
                           <Mail size={16} />
                         </button>
-                        <a 
-                          href={`/api/download/${p.id}`} 
+                        <button 
+                          onClick={() => handleDownload(p.id, 'pptx')}
                           title="Descargar PPTX"
                           className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-slate-800)] hover:bg-[var(--naaloo-slate-200)] rounded transition-all"
                         >
                           <Download size={16} />
-                        </a>
-                        <a 
-                          href={`/api/download/${p.id}?format=pdf`} 
+                        </button>
+                        <button 
+                          onClick={() => handleDownload(p.id, 'pdf')}
                           title="Descargar PDF"
                           className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-slate-800)] hover:bg-[var(--naaloo-slate-200)] rounded transition-all"
                         >
                           <FileText size={16} />
-                        </a>
+                        </button>
                         <button 
                           onClick={() => handleDelete(p.id)} 
                           title="Eliminar"

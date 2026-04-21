@@ -63,7 +63,9 @@ export default function HomePage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [generatedId, setGeneratedId] = useState<string | null>(null)
+  const generatedIdRef = useRef<string | null>(null)
   const [emailModalOpen, setEmailModalOpen] = useState(false)
+  const [downloading, setDownloading] = useState(false)
 
   // Auto-selection when usuarios change
   useEffect(() => {
@@ -121,16 +123,45 @@ export default function HomePage() {
     setRangoActivo(null) // manual override
   }
 
+  // Descarga robusta via fetch + blob (evita el Router Cache de Next.js)
+  const handleDownload = useCallback(async (format: 'pptx' | 'pdf') => {
+    const id = generatedIdRef.current
+    if (!id) { setError('No hay presupuesto generado'); return }
+    setDownloading(true)
+    try {
+      const url = `/api/download/${id}${format === 'pdf' ? '?format=pdf' : ''}`
+      const res = await fetch(url, { cache: 'no-store' })
+      if (!res.ok) throw new Error('Error al descargar')
+      const blob = await res.blob()
+      const disposition = res.headers.get('Content-Disposition') || ''
+      const filenameMatch = disposition.match(/filename="?([^"]+)"?/)
+      const filename = filenameMatch ? filenameMatch[1] : `presupuesto.${format}`
+      const blobUrl = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(blobUrl)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al descargar')
+    } finally {
+      setDownloading(false)
+    }
+  }, [])
+
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccess(false)
+    setGeneratedId(null)
+    generatedIdRef.current = null
 
     if (!nombreEmpresa.trim()) { setError('Por favor, ingresá el nombre de la empresa.'); return }
     if (Number(cantidadUsuarios) < 1) { setError('La cantidad de usuarios debe ser mayor a 0.'); return }
 
     setLoading(true)
-    setGeneratedId(null)
     try {
       const res = await fetch('/api/generar', {
         method: 'POST',
@@ -151,22 +182,19 @@ export default function HomePage() {
         throw new Error(data.error || 'Error al generar el presupuesto')
       }
 
-        const presupuestoId = res.headers.get('X-Presupuesto-Id');
-        console.log('Frontend: ID recibido del header:', presupuestoId);
-        if (presupuestoId) {
-          setGeneratedId(presupuestoId)
-        } else {
-          const data = await res.json();
-          console.log('Frontend: ID recibido del body:', data.id);
-          setGeneratedId(data.id)
-        }
-        setSuccess(true)
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Error inesperado')
-      } finally {
-        setLoading(false)
-      }
-    }, [nombreEmpresa, cantidadUsuarios, valorLicenciaRaw, descuentoPct, descuentoMeses, fecha, rangoActivo])
+      // Siempre leer el ID del body JSON (más confiable que headers custom)
+      const data = await res.json()
+      const newId = data.id
+      if (!newId) throw new Error('No se recibió el ID del presupuesto')
+      generatedIdRef.current = newId
+      setGeneratedId(newId)
+      setSuccess(true)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error inesperado')
+    } finally {
+      setLoading(false)
+    }
+  }, [nombreEmpresa, cantidadUsuarios, valorLicenciaRaw, descuentoPct, descuentoMeses, fecha, rangoActivo])
   
     return (
       <div className="flex flex-col h-full md:max-h-[85vh]">
@@ -321,25 +349,23 @@ export default function HomePage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        window.location.href = `/api/download/${generatedId}?t=${Date.now()}`
-                      }}
+                      disabled={downloading}
+                      onClick={() => handleDownload('pptx')}
                       className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
                     >
-                      <Download size={14} /> PPTX
+                      {downloading ? <div className="spinner w-3 h-3" /> : <Download size={14} />} PPTX
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        window.location.href = `/api/download/${generatedId}?format=pdf&t=${Date.now()}`
-                      }}
+                      disabled={downloading}
+                      onClick={() => handleDownload('pdf')}
                       className="flex-1 bg-[var(--naaloo-slate-100)] hover:bg-[var(--naaloo-slate-200)] text-[var(--naaloo-slate-700)] font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors border border-[var(--naaloo-slate-200)]"
                     >
-                      <FileText size={14} /> PDF
+                      {downloading ? <div className="spinner w-3 h-3" /> : <FileText size={14} />} PDF
                     </button>
                   </div>
                 <button 
-                  onClick={() => { setSuccess(false); setGeneratedId(null); }}
+                  onClick={() => { setSuccess(false); setGeneratedId(null); generatedIdRef.current = null; }}
                   className="text-[11px] text-[var(--naaloo-slate-400)] hover:text-[var(--naaloo-slate-600)] transition-colors mt-1"
                 >
                   Generar otro
