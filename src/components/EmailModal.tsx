@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Send, File as FileIcon } from 'lucide-react'
 
 interface EmailModalProps {
@@ -18,13 +18,11 @@ export default function EmailModal({ isOpen, onClose, presupuestoId, empresa }: 
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
-  // Update subject and body if empresa changes (only if modal is closed and we re-open for another client maybe, or better to reset via effect if needed, but doing it in state initializer is a bit sticky. Let's just use effect)
-  import('react').then(({ useEffect }) => {
-    useEffect(() => {
-      setSubject(`Presupuesto Naaloo - ${empresa}`)
-      setBody(`Hola,\n\nAdjunto enviamos la propuesta comercial para ${empresa}.\n\nSaludos,\nEl equipo de Naaloo`)
-    }, [empresa])
-  })
+  // Update subject and body if empresa changes
+  useEffect(() => {
+    setSubject(`Presupuesto Naaloo - ${empresa}`)
+    setBody(`Hola,\n\nAdjunto enviamos la propuesta comercial para ${empresa}.\n\nSaludos,\nEl equipo de Naaloo`)
+  }, [empresa])
 
   if (!isOpen) return null
 

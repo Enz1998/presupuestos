@@ -130,6 +130,7 @@ export default function HomePage() {
     if (Number(cantidadUsuarios) < 1) { setError('La cantidad de usuarios debe ser mayor a 0.'); return }
 
     setLoading(true)
+    setGeneratedId(null)
     try {
       const res = await fetch('/api/generar', {
         method: 'POST',
@@ -318,13 +319,13 @@ export default function HomePage() {
                     <Mail size={14} /> Correo
                   </button>
                   <a
-                    href={`/api/download/${generatedId}`}
+                    href={`/api/download/${generatedId}?t=${Date.now()}`}
                     className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
                   >
                     <Download size={14} /> PPTX
                   </a>
                   <a
-                    href={`/api/download/${generatedId}?format=pdf`}
+                    href={`/api/download/${generatedId}?format=pdf&t=${Date.now()}`}
                     className="flex-1 bg-[var(--naaloo-slate-100)] hover:bg-[var(--naaloo-slate-200)] text-[var(--naaloo-slate-700)] font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors border border-[var(--naaloo-slate-200)]"
                   >
                     <FileText size={14} /> PDF

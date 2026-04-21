@@ -7,6 +7,8 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 const ConvertApi = require('convertapi')
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -101,6 +103,9 @@ export async function GET(
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename="${filename}"`,
         'Content-Length': finalBuffer.length.toString(),
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     })
   } catch (err) {
