@@ -18,15 +18,33 @@ export async function POST(req: NextRequest) {
     }
 
     // Configuración de SMTP (Nodemailer)
+    // Valores por defecto optimizados para Gmail
+    const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com'
+    const smtpPort = Number(process.env.SMTP_PORT) || 465
+    const smtpSecure = process.env.SMTP_SECURE !== undefined
+      ? process.env.SMTP_SECURE === 'true'
+      : smtpPort === 465
+
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === 'true', // true para 465, false para otros puertos
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpSecure,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     })
+
+    // Verificar conexión antes de procesar archivos (evita trabajo innecesario si las credenciales fallan)
+    try {
+      await transporter.verify()
+    } catch (verifyErr: any) {
+      console.error('Error de verificación SMTP:', verifyErr)
+      return NextResponse.json(
+        { error: 'No se pudo conectar al servidor de correo. Revisá las credenciales SMTP en .env.local.', details: verifyErr?.message },
+        { status: 500 }
+      )
+    }
 
     const supabase = await createClient()
 
@@ -96,12 +114,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 5. Enviar el correo con Nodemailer
+    // 5. Enviar el correo con Nodemailer (texto plano + HTML)
+    const htmlBody = `<div style="font-family:Arial,sans-serif;font-size:14px;color:#333;line-height:1.5;">${body.replace(/\n/g, '<br>')}</div>`
+
     await transporter.sendMail({
       from: `"${process.env.SMTP_FROM_NAME || 'Presupuestos Naaloo'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
       to: to,
       subject: subject,
       text: body,
+      html: htmlBody,
       attachments: [
         {
           filename: filename,

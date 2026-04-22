@@ -63,9 +63,37 @@ export default function HomePage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [generatedId, setGeneratedId] = useState<string | null>(null)
-  const generatedIdRef = useRef<string | null>(null)
   const [emailModalOpen, setEmailModalOpen] = useState(false)
   const [downloading, setDownloading] = useState(false)
+
+  // Resetea el estado de "presupuesto generado" cuando el usuario empieza a editar
+  const resetGeneratedState = useCallback(() => {
+    if (success || generatedId) {
+      setSuccess(false)
+      setGeneratedId(null)
+      setEmailModalOpen(false)
+      setDownloading(false)
+    }
+  }, [success, generatedId])
+
+  // Reset completo del formulario para "Generar otro" sin refrescar
+  const handleReset = useCallback(() => {
+    setNombreEmpresa('')
+    setFecha(getTodayISO())
+    setCantidadUsuarios('')
+    setValorLicenciaDisplay('')
+    setValorLicenciaRaw(0)
+    setDescuentoPct('')
+    setDescuentoMeses('')
+    setRangoActivo(null)
+    setRecursoExcedente(0)
+    setValorTotal(0)
+    setSuccess(false)
+    setGeneratedId(null)
+    setEmailModalOpen(false)
+    setDownloading(false)
+    setError('')
+  }, [])
 
   // Auto-selection when usuarios change
   useEffect(() => {
@@ -117,6 +145,7 @@ export default function HomePage() {
   }, [valorLicenciaRaw, cantidadUsuarios, descuentoPct, rangoActivo])
 
   const handleValorLicenciaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    resetGeneratedState()
     const formatted = formatCurrencyInput(e.target.value)
     setValorLicenciaDisplay(formatted)
     setValorLicenciaRaw(parseCurrencyInput(formatted))
@@ -124,12 +153,10 @@ export default function HomePage() {
   }
 
   // Descarga robusta via fetch + blob (evita el Router Cache de Next.js)
-  const handleDownload = useCallback(async (format: 'pptx' | 'pdf') => {
-    const id = generatedIdRef.current
-    if (!id) { setError('No hay presupuesto generado'); return }
+  const handleDownload = useCallback(async (id: string, format: 'pptx' | 'pdf') => {
     setDownloading(true)
     try {
-      const url = `/api/download/${id}${format === 'pdf' ? '?format=pdf' : ''}`
+      const url = `/api/download/${id}${format === 'pdf' ? '?format=pdf' : ''}&t=${Date.now()}`
       const res = await fetch(url, { cache: 'no-store' })
       if (!res.ok) throw new Error('Error al descargar')
       const blob = await res.blob()
@@ -156,14 +183,13 @@ export default function HomePage() {
     setError('')
     setSuccess(false)
     setGeneratedId(null)
-    generatedIdRef.current = null
 
     if (!nombreEmpresa.trim()) { setError('Por favor, ingresá el nombre de la empresa.'); return }
     if (Number(cantidadUsuarios) < 1) { setError('La cantidad de usuarios debe ser mayor a 0.'); return }
 
     setLoading(true)
     try {
-      const res = await fetch('/api/generar', {
+      const res = await fetch(`/api/generar?t=${Date.now()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -186,7 +212,6 @@ export default function HomePage() {
       const data = await res.json()
       const newId = data.id
       if (!newId) throw new Error('No se recibió el ID del presupuesto')
-      generatedIdRef.current = newId
       setGeneratedId(newId)
       setSuccess(true)
     } catch (err: unknown) {
@@ -226,7 +251,7 @@ export default function HomePage() {
                     className="input shadow-sm py-1.5"
                     placeholder="Ej. Acme Corp"
                     value={nombreEmpresa}
-                    onChange={(e) => setNombreEmpresa(e.target.value)}
+                    onChange={(e) => { resetGeneratedState(); setNombreEmpresa(e.target.value) }}
                     required
                   />
                 </div>
@@ -237,7 +262,7 @@ export default function HomePage() {
                     type="date"
                     className="input shadow-sm py-1.5"
                     value={fecha}
-                    onChange={(e) => setFecha(e.target.value)}
+                    onChange={(e) => { resetGeneratedState(); setFecha(e.target.value) }}
                     required
                   />
                 </div>
@@ -259,7 +284,7 @@ export default function HomePage() {
                     className="input shadow-sm py-1.5"
                     min={1}
                     value={cantidadUsuarios}
-                    onChange={(e) => setCantidadUsuarios(parseInt(e.target.value) || '')}
+                    onChange={(e) => { resetGeneratedState(); setCantidadUsuarios(parseInt(e.target.value) || '') }}
                   />
                 </div>
                 <div>
@@ -285,8 +310,8 @@ export default function HomePage() {
                       className="input shadow-sm pr-7 py-1.5"
                       min={0}
                       max={100}
-                      value={descuentoPct}
-                      onChange={(e) => setDescuentoPct(parseFloat(e.target.value) || 0)}
+                    value={descuentoPct}
+                    onChange={(e) => { resetGeneratedState(); setDescuentoPct(parseFloat(e.target.value) || 0) }}
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--naaloo-slate-500)] text-[12px]">%</span>
                   </div>
@@ -299,7 +324,7 @@ export default function HomePage() {
                     className="input shadow-sm py-1.5"
                     min={1}
                     value={descuentoMeses}
-                    onChange={(e) => setDescuentoMeses(e.target.value)}
+                    onChange={(e) => { resetGeneratedState(); setDescuentoMeses(e.target.value) }}
                   />
                 </div>
               </div>
@@ -349,23 +374,24 @@ export default function HomePage() {
                     </button>
                     <button
                       type="button"
-                      disabled={downloading}
-                      onClick={() => handleDownload('pptx')}
+                      disabled={downloading || !generatedId}
+                      onClick={() => generatedId && handleDownload(generatedId, 'pptx')}
                       className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
                     >
                       {downloading ? <div className="spinner w-3 h-3" /> : <Download size={14} />} PPTX
                     </button>
                     <button
                       type="button"
-                      disabled={downloading}
-                      onClick={() => handleDownload('pdf')}
+                      disabled={downloading || !generatedId}
+                      onClick={() => generatedId && handleDownload(generatedId, 'pdf')}
                       className="flex-1 bg-[var(--naaloo-slate-100)] hover:bg-[var(--naaloo-slate-200)] text-[var(--naaloo-slate-700)] font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors border border-[var(--naaloo-slate-200)]"
                     >
                       {downloading ? <div className="spinner w-3 h-3" /> : <FileText size={14} />} PDF
                     </button>
                   </div>
                 <button 
-                  onClick={() => { setSuccess(false); setGeneratedId(null); generatedIdRef.current = null; }}
+                  type="button"
+                  onClick={handleReset}
                   className="text-[11px] text-[var(--naaloo-slate-400)] hover:text-[var(--naaloo-slate-600)] transition-colors mt-1"
                 >
                   Generar otro
@@ -402,6 +428,7 @@ export default function HomePage() {
                         ref={el => { rangeRefs.current[r.id] = el; }}
                         className={`cursor-pointer transition-colors ${rangoActivo?.id === r.id ? 'bg-[#F1F5F9]' : 'hover:bg-slate-50'} ${idx !== 0 ? 'border-t border-[#F1F5F9]' : ''}`}
                         onClick={() => {
+                          resetGeneratedState()
                           setRangoActivo(r)
                           const calculatedLicencia = Math.round(Number(cantidadUsuarios || 0) * r.valor_unitario)
                           setValorLicenciaRaw(calculatedLicencia)

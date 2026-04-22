@@ -42,7 +42,8 @@ export default function EmailModal({ isOpen, onClose, presupuestoId, empresa }: 
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data.error || 'Error al enviar el correo')
+        const msg = data.details ? `${data.error} (${data.details})` : data.error
+        throw new Error(msg || 'Error al enviar el correo')
       }
 
       setSuccess(true)

@@ -1,0 +1,23 @@
+▲ Next.js 16.2.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.100.26:3000
+- Environments: .env.local
+✓ Ready in 642ms
+
+ GET / 200 in 2.5s (next.js: 231ms, proxy.ts: 1990ms, application-code: 233ms)
+ GET /api/rangos 200 in 1802ms (next.js: 92ms, proxy.ts: 1010ms, application-code: 701ms)
+ POST /api/generar?t=1776879324452 200 in 2.1s (next.js: 72ms, proxy.ts: 469ms, application-code: 1599ms)
+Backend: Descarga solicitada para ID: 82c147dd-44f7-40f5-a395-39a48f814870, Formato: pdf
+Backend: Generando para empresa: Renault, Versión: 1
+ GET /api/download/82c147dd-44f7-40f5-a395-39a48f814870?format=pdf&t=1776879328342 200 in 12.3s (next.js: 835ms, proxy.ts: 298ms, application-code: 11.2s)
+ GET /api/rangos 200 in 769ms (next.js: 9ms, proxy.ts: 417ms, application-code: 343ms)
+ GET /api/rangos 200 in 663ms (next.js: 4ms, proxy.ts: 351ms, application-code: 308ms)
+ POST /api/generar?t=1776879362255 200 in 1352ms (next.js: 4ms, proxy.ts: 352ms, application-code: 996ms)
+Backend: Descarga solicitada para ID: a82bfbde-6c71-43e9-b2b9-32261d3d0f6e, Formato: pdf
+Backend: Generando para empresa: Peugeot, Versión: 1
+ GET /api/download/a82bfbde-6c71-43e9-b2b9-32261d3d0f6e?format=pdf&t=1776879364389 200 in 9.9s (next.js: 19ms, proxy.ts: 304ms, application-code: 9.5s)
+ GET /api/rangos 200 in 729ms (next.js: 7ms, proxy.ts: 388ms, application-code: 334ms)
+ GET /api/rangos 200 in 929ms (next.js: 3ms, proxy.ts: 533ms, application-code: 393ms)
+ GET /api/rangos 200 in 723ms (next.js: 3ms, proxy.ts: 409ms, application-code: 310ms)
+ GET /api/rangos 200 in 816ms (next.js: 3ms, proxy.ts: 388ms, application-code: 425ms)
+ GET /api/rangos 200 in 719ms (next.js: 4ms, proxy.ts: 379ms, application-code: 336ms)

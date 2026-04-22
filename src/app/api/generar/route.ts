@@ -4,6 +4,8 @@ import { generatePptx } from '@/lib/pptx-generator'
 import { format } from 'date-fns'
 import { createClient } from '@/utils/supabase/server'
 
+export const dynamic = 'force-dynamic'
+
 // POST /api/generar – guardar presupuesto y devolver PPTX
 export async function POST(req: NextRequest) {
   try {
