@@ -21,3 +21,7 @@ Backend: Generando para empresa: Peugeot, Versión: 1
  GET /api/rangos 200 in 723ms (next.js: 3ms, proxy.ts: 409ms, application-code: 310ms)
  GET /api/rangos 200 in 816ms (next.js: 3ms, proxy.ts: 388ms, application-code: 425ms)
  GET /api/rangos 200 in 719ms (next.js: 4ms, proxy.ts: 379ms, application-code: 336ms)
+ GET /api/rangos 200 in 689ms (next.js: 5ms, proxy.ts: 362ms, application-code: 322ms)
+ GET /api/rangos 200 in 908ms (next.js: 4ms, proxy.ts: 427ms, application-code: 477ms)
+ GET / 200 in 545ms (next.js: 3ms, proxy.ts: 419ms, application-code: 124ms)
+ GET / 200 in 2.3s (next.js: 23ms, proxy.ts: 2.1s, application-code: 183ms)

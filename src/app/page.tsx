@@ -156,7 +156,7 @@ export default function HomePage() {
   const handleDownload = useCallback(async (id: string, format: 'pptx' | 'pdf') => {
     setDownloading(true)
     try {
-      const url = `/api/download/${id}${format === 'pdf' ? '?format=pdf' : ''}&t=${Date.now()}`
+      const url = `/api/download/${id}?${format === 'pdf' ? 'format=pdf&' : ''}t=${Date.now()}`
       const res = await fetch(url, { cache: 'no-store' })
       if (!res.ok) throw new Error('Error al descargar')
       const blob = await res.blob()
