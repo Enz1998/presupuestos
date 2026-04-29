@@ -71,23 +71,20 @@ export async function GET(
           File: tempPptxPath
         }, 'pptx')
         
-        const file = result.file
-        // Dependiendo de convertapi, a veces result.file.read() da error si no es stream. 
-        // Por seguridad, guardamos el resultado a un archivo temporal PDF también y lo leemos, o usamos read() si está soportado.
-        // Pero intentemos usar un guardado local para evitar bugs y fallos de streaming:
-        const tempPdfPath = path.join(os.tmpdir(), `${tempId}.pdf`)
-        await result.saveFiles(tempPdfPath)
-        
-        // Leer el PDF
-        const pdfFileBuffer = await fs.readFile(tempPdfPath)
-        finalBuffer = pdfFileBuffer
+        // Descargamos el PDF directamente a la memoria usando fetch nativo
+        // (Evitamos .saveFiles() porque usa streams de Axios que fallan en Vercel/Next.js)
+        const pdfResponse = await fetch(result.file.url)
+        if (!pdfResponse.ok) {
+          throw new Error(`Fallo al descargar PDF de ConvertAPI: ${pdfResponse.statusText}`)
+        }
+        const pdfArrayBuffer = await pdfResponse.arrayBuffer()
+        finalBuffer = Buffer.from(pdfArrayBuffer)
         
         filename = filename.replace('.pptx', '.pdf')
         contentType = 'application/pdf'
 
-        // Limpiar archivos temporales (no esperamos a que termine para seguir)
+        // Limpiar archivo temporal PPTX (no esperamos a que termine para seguir)
         fs.unlink(tempPptxPath).catch(console.error)
-        fs.unlink(tempPdfPath).catch(console.error)
       } catch (convErr: any) {
         console.error('Error en conversion ConvertAPI:', convErr)
         // Limpiar en caso de error

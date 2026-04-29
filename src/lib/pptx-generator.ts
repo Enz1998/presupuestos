@@ -72,19 +72,10 @@ export async function generatePptx(data: PptxData): Promise<Buffer> {
         'Descuento de 25% por 3 meses',
         `Descuento de ${data.descuentoPorcentaje}% por ${data.descuentoMeses} meses`
       )
-
-      // Valor total (en el cuadro inferior): "Bonificado por ahora  " (con 2 espacios)
-      xml6 = xml6.replace(
-        'Bonificado por ahora  ',
-        `$${formatPeso(data.valorTotalMensual)} + IVA`
-      )
-    } else {
-      // Valor total sin descuento: "Bonificado por ahora" (sin espacios extra)
-      xml6 = xml6.replace(
-        'Bonificado por ahora',
-        `$${formatPeso(data.valorTotalMensual)} + IVA`
-      )
+      // Nota: "Bonificado por ahora" es texto estático de la tarjeta de Onboarding y NO se reemplaza.
     }
+    // Nota: "Bonificado por ahora" y "Única vez" son textos estáticos de la tarjeta de
+    // Onboarding inmediato y capacitación — el template ya los tiene correctos, no se tocan.
 
     zip.file('ppt/slides/slide6.xml', xml6)
   }
