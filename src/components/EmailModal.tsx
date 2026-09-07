@@ -1,6 +1,16 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { X, Send, File as FileIcon } from 'lucide-react'
+import { pptxArrayBufferToPdf } from '@/lib/pptx-to-pdf-client'
+
+function uint8ToBase64(bytes: Uint8Array): string {
+  let binary = ''
+  const chunk = 0x8000
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk))
+  }
+  return btoa(binary)
+}
 
 interface EmailModalProps {
   isOpen: boolean
@@ -34,10 +44,19 @@ export default function EmailModal({ isOpen, onClose, presupuestoId, empresa }: 
     setLoading(true)
 
     try {
+      let pdfBase64: string | undefined
+      if (format === 'pdf') {
+        const pptxRes = await fetch(`/api/download/${presupuestoId}?t=${Date.now()}`, { cache: 'no-store' })
+        if (!pptxRes.ok) throw new Error('No se pudo generar la propuesta')
+        const pptxBuf = await pptxRes.arrayBuffer()
+        const pdfBytes = await pptxArrayBufferToPdf(pptxBuf)
+        pdfBase64 = uint8ToBase64(pdfBytes)
+      }
+
       const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: presupuestoId, to, subject, body, format }),
+        body: JSON.stringify({ id: presupuestoId, to, subject, body, format, pdfBase64 }),
       })
 
       const data = await res.json()
@@ -61,7 +80,7 @@ export default function EmailModal({ isOpen, onClose, presupuestoId, empresa }: 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadein">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-[var(--naaloo-slate-200)]">
           <h2 className="text-lg font-bold text-[var(--naaloo-slate-800)] flex items-center gap-2">
             <Send size={18} /> Enviar Presupuesto
@@ -73,67 +92,67 @@ export default function EmailModal({ isOpen, onClose, presupuestoId, empresa }: 
         
         <form onSubmit={handleSend} className="p-4 flex flex-col gap-4">
           {success && (
-            <div className="alert alert-success py-2 text-[13px] bg-green-50 text-green-800 border-green-200">
+            <div className="alert alert-success py-2 text-[13px]">
               <span className="mr-2">✓</span> Correo enviado con éxito
             </div>
           )}
           {error && (
-            <div className="alert alert-error py-2 text-[13px] bg-red-50 text-red-800 border-red-200">
+            <div className="alert alert-error py-2 text-[13px]">
               <span className="mr-2">⚠</span> {error}
             </div>
           )}
 
           <div>
-            <label className="input-label text-[12px] mb-1 font-semibold text-slate-700">Destinatario (Email)</label>
+            <label className="input-label text-[12px] mb-1 font-semibold">Destinatario (Email)</label>
             <input
               type="email"
               required
-              className="input py-2 shadow-sm border border-slate-300 rounded-md w-full px-3"
+              className="input py-2"
               placeholder="cliente@empresa.com"
               value={to}
               onChange={e => setTo(e.target.value)}
             />
           </div>
           <div>
-            <label className="input-label text-[12px] mb-1 font-semibold text-slate-700">Asunto</label>
+            <label className="input-label text-[12px] mb-1 font-semibold">Asunto</label>
             <input
               type="text"
               required
-              className="input py-2 shadow-sm border border-slate-300 rounded-md w-full px-3"
+              className="input py-2"
               value={subject}
               onChange={e => setSubject(e.target.value)}
             />
           </div>
           <div>
-            <label className="input-label text-[12px] mb-1 font-semibold text-slate-700">Cuerpo del correo</label>
+            <label className="input-label text-[12px] mb-1 font-semibold">Cuerpo del correo</label>
             <textarea
               required
               rows={5}
-              className="input py-2 shadow-sm resize-none custom-scrollbar border border-slate-300 rounded-md w-full px-3"
+              className="input py-2 shadow-sm resize-none custom-scrollbar"
               value={body}
               onChange={e => setBody(e.target.value)}
             />
           </div>
           <div>
-            <label className="input-label text-[12px] mb-1 font-semibold text-slate-700">Formato del Adjunto</label>
+            <label className="input-label text-[12px] mb-1 font-semibold">Formato del Adjunto</label>
             <div className="flex gap-6 mt-1.5">
-              <label className="flex items-center gap-2 text-[13px] text-slate-600 cursor-pointer hover:text-slate-800">
-                <input type="radio" value="pdf" checked={format === 'pdf'} onChange={e => setFormat(e.target.value)} className="w-4 h-4 accent-[#00B2FF]" />
+              <label className="flex items-center gap-2 text-[13px] text-[var(--naaloo-slate-600)] cursor-pointer hover:text-[var(--naaloo-text)]">
+                <input type="radio" value="pdf" checked={format === 'pdf'} onChange={e => setFormat(e.target.value)} className="w-4 h-4 accent-[var(--naaloo-blue)]" />
                 <FileIcon size={16} /> Documento PDF
               </label>
-              <label className="flex items-center gap-2 text-[13px] text-slate-600 cursor-pointer hover:text-slate-800">
-                <input type="radio" value="pptx" checked={format === 'pptx'} onChange={e => setFormat(e.target.value)} className="w-4 h-4 accent-[#00B2FF]" />
+              <label className="flex items-center gap-2 text-[13px] text-[var(--naaloo-slate-600)] cursor-pointer hover:text-[var(--naaloo-text)]">
+                <input type="radio" value="pptx" checked={format === 'pptx'} onChange={e => setFormat(e.target.value)} className="w-4 h-4 accent-[var(--naaloo-blue)]" />
                 <FileIcon size={16} /> Presentación PPTX
               </label>
             </div>
           </div>
           
           <div className="mt-4 flex justify-end gap-3 pt-4 border-t border-[var(--naaloo-slate-100)]">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-[13px] font-medium text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-slate-800)] hover:bg-[var(--naaloo-slate-100)] rounded-md transition-colors">
+            <button type="button" onClick={onClose} className="btn-ghost px-4 py-2 text-[13px] text-[var(--naaloo-slate-500)]">
               Cancelar
             </button>
-            <button type="submit" disabled={loading} className="btn-primary py-2 px-5 shadow-sm text-[13px] flex items-center justify-center gap-2 min-w-[120px] bg-[#00B2FF] hover:bg-[#008FCC] text-white rounded-md transition-all">
-              {loading ? <div className="spinner w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send size={14} /> Enviar Correo</>}
+            <button type="submit" disabled={loading} className="btn-primary py-2 px-5 text-[13px] min-w-[120px]">
+              {loading ? <div className="spinner w-4 h-4" /> : <><Send size={14} /> Enviar Correo</>}
             </button>
           </div>
         </form>

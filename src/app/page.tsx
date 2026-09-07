@@ -1,8 +1,9 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { RangoPrecio, findRangoForUsuarios, roundToNearest10 } from '@/lib/supabase'
-import { Building2, Key, BarChart3, FileText, Download, Mail } from 'lucide-react'
+import { Building2, Key, BarChart3, FileText, Download, Mail, Printer } from 'lucide-react'
 import EmailModal from '@/components/EmailModal'
+import { downloadPresupuestoFile } from '@/lib/download-presupuesto'
 
 import useSWR from 'swr'
 
@@ -152,25 +153,11 @@ export default function HomePage() {
     setRangoActivo(null) // manual override
   }
 
-  // Descarga robusta via fetch + blob (evita el Router Cache de Next.js)
   const handleDownload = useCallback(async (id: string, format: 'pptx' | 'pdf') => {
     setDownloading(true)
+    setError('')
     try {
-      const url = `/api/download/${id}?${format === 'pdf' ? 'format=pdf&' : ''}t=${Date.now()}`
-      const res = await fetch(url, { cache: 'no-store' })
-      if (!res.ok) throw new Error('Error al descargar')
-      const blob = await res.blob()
-      const disposition = res.headers.get('Content-Disposition') || ''
-      const filenameMatch = disposition.match(/filename="?([^"]+)"?/)
-      const filename = filenameMatch ? filenameMatch[1] : `presupuesto.${format}`
-      const blobUrl = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = blobUrl
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(blobUrl)
+      await downloadPresupuestoFile(id, format)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al descargar')
     } finally {
@@ -225,10 +212,10 @@ export default function HomePage() {
       <div className="flex flex-col h-full md:max-h-[85vh]">
         <div className="mb-4 flex-shrink-0">
           <h1 className="text-2xl font-bold text-[var(--naaloo-slate-800)] mb-0.5 tracking-tight">
-            Nueva Propuesta Comercial
+            Nueva propuesta comercial
           </h1>
           <p className="text-[var(--naaloo-slate-500)] text-[13px]">
-            Configure client details, licensing, and pricing tiers below.
+            Completá los datos del cliente, la licencia y los rangos de precio.
           </p>
         </div>
   
@@ -239,8 +226,8 @@ export default function HomePage() {
             {/* Client Data Module */}
             <div className="panel-soft p-4 flex-shrink-0">
               <h2 className="section-title text-[14px] mb-3">
-                <Building2 size={16} className="text-[var(--naaloo-slate-500)]" />
-                Client Data
+                <span className="icon-chip"><Building2 size={14} /></span>
+                Datos del cliente
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -272,8 +259,8 @@ export default function HomePage() {
             {/* License Section Module */}
             <div className="panel-soft p-4 flex-shrink-0">
               <h2 className="section-title text-[14px] mb-3">
-                <Key size={16} className="text-[var(--naaloo-slate-500)]" />
-                License Section
+                <span className="icon-chip"><Key size={14} /></span>
+                Licencia
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -335,17 +322,20 @@ export default function HomePage() {
           <div className="flex flex-col gap-4 overflow-y-auto pr-1">
             {/* Summary Card (Appears before Rangos on mobile) */}
             <div className="card p-4 flex-shrink-0 order-1 lg:order-2">
-              <h2 className="section-title mb-4 text-[14px]">Summary</h2>
+              <h2 className="section-title mb-4 text-[14px]">
+                <span className="icon-chip"><FileText size={14} /></span>
+                Resumen
+              </h2>
               <div className="flex justify-between items-center mb-3">
-                <span className="text-[12px] text-[#64748B] font-medium">Recurso Excedente</span>
-                <span className="text-[13px] text-[#1E293B] font-semibold">${formatDisplay(recursoExcedente)}</span>
+                <span className="text-[12px] text-[var(--naaloo-slate-500)] font-medium">Recurso excedente</span>
+                <span className="text-[13px] text-[var(--naaloo-text)] font-semibold">${formatDisplay(recursoExcedente)}</span>
               </div>
-              <div className="bg-[#F1F5F9] rounded-lg p-3 mb-4 flex items-center justify-between">
+              <div className="bg-[var(--naaloo-blue-subtle)] rounded-xl p-3 mb-4 flex items-center justify-between">
                 <div>
-                  <p className="text-[12px] text-[#1E293B] font-semibold">Total Mensual</p>
-                  <p className="text-[10px] text-[#64748B]">con Descuento</p>
+                  <p className="text-[12px] text-[var(--naaloo-text)] font-semibold">Total mensual</p>
+                  <p className="text-[10px] text-[var(--naaloo-blue)]">con descuento</p>
                 </div>
-                <div className="text-[20px] font-bold text-[#1E293B] tracking-tight">
+                <div className="text-[20px] font-bold text-[var(--naaloo-blue)] tracking-tight">
                   ${formatDisplay(valorTotal)}
                 </div>
               </div>
@@ -355,7 +345,7 @@ export default function HomePage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#475569] hover:bg-[#334155] text-white font-medium text-[14px] py-2.5 rounded-md flex items-center justify-center gap-2 transition-colors flex-shrink-0 mt-auto"
+                  className="btn-primary w-full py-2.5 text-[14px] mt-auto"
                 >
                   {loading ? <><div className="spinner w-3 h-3" /> Generando...</> : <><FileText size={16} /> Generar Presupuesto</>}
                 </button>
@@ -364,11 +354,11 @@ export default function HomePage() {
                   <div className="alert alert-success py-2 text-[12px] mb-1">
                     <span>✓</span> Presupuesto generado con éxito
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setEmailModalOpen(true)}
-                      className="flex-1 bg-[#00B2FF] hover:bg-[#008FCC] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors shadow-sm"
+                      className="btn-primary py-2 text-[13px]"
                     >
                       <Mail size={14} /> Correo
                     </button>
@@ -376,23 +366,31 @@ export default function HomePage() {
                       type="button"
                       disabled={downloading || !generatedId}
                       onClick={() => generatedId && handleDownload(generatedId, 'pptx')}
-                      className="flex-1 bg-[#475569] hover:bg-[#334155] text-white font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
+                      className="btn-secondary py-2 text-[13px]"
                     >
-                      {downloading ? <div className="spinner w-3 h-3" /> : <Download size={14} />} PPTX
+                      {downloading ? <div className="spinner-muted w-3 h-3" /> : <Download size={14} />} PPTX
                     </button>
                     <button
                       type="button"
                       disabled={downloading || !generatedId}
                       onClick={() => generatedId && handleDownload(generatedId, 'pdf')}
-                      className="flex-1 bg-[var(--naaloo-slate-100)] hover:bg-[var(--naaloo-slate-200)] text-[var(--naaloo-slate-700)] font-medium text-[13px] py-2 rounded-md flex items-center justify-center gap-2 transition-colors border border-[var(--naaloo-slate-200)]"
+                      className="btn-secondary py-2 text-[13px]"
                     >
-                      {downloading ? <div className="spinner w-3 h-3" /> : <FileText size={14} />} PDF
+                      {downloading ? <div className="spinner-muted w-3 h-3" /> : <FileText size={14} />} PDF
+                    </button>
+                    <button
+                      type="button"
+                      disabled={downloading || !generatedId}
+                      onClick={() => generatedId && handleDownload(generatedId, 'pdf')}
+                      className="btn-secondary py-2 text-[13px]"
+                    >
+                      {downloading ? <div className="spinner-muted w-3 h-3" /> : <Printer size={14} />} Imprimir
                     </button>
                   </div>
                 <button 
                   type="button"
                   onClick={handleReset}
-                  className="text-[11px] text-[var(--naaloo-slate-400)] hover:text-[var(--naaloo-slate-600)] transition-colors mt-1"
+                  className="text-[11px] text-[var(--naaloo-blue)] hover:text-[var(--naaloo-blue-hover)] transition-colors mt-1"
                 >
                   Generar otro
                 </button>
@@ -403,8 +401,8 @@ export default function HomePage() {
           {/* Price Ranges Card (Appears after Summary on mobile) */}
           <div className="card p-4 flex flex-col min-h-[300px] lg:min-h-0 order-2 lg:order-1 flex-1">
             <h2 className="section-title text-[14px] mb-2">
-              <BarChart3 size={16} className="text-[var(--naaloo-slate-500)]" />
-              Price Ranges
+              <span className="icon-chip"><BarChart3 size={14} /></span>
+              Rangos de precio
             </h2>
             <div 
               ref={tableContainerRef}
@@ -414,11 +412,11 @@ export default function HomePage() {
                 <div className="py-4 text-center text-[var(--naaloo-slate-500)] text-xs">Cargando rangos...</div>
               ) : (
                 <table className="w-full text-[12px] border-separate border-spacing-0">
-                  <thead className="bg-[#F1F5F9] sticky top-0 z-10">
+                  <thead className="bg-[var(--naaloo-bg)] sticky top-0 z-10">
                     <tr>
-                      <th className="py-2 px-4 font-medium text-[var(--naaloo-slate-500)] text-left bg-[#F1F5F9] border-b border-[var(--naaloo-slate-200)]">Rango</th>
-                      <th className="py-2 px-4 font-medium text-[var(--naaloo-slate-500)] text-right bg-[#F1F5F9] border-b border-[var(--naaloo-slate-200)]">P.U.</th>
-                      <th className="py-2 px-4 font-medium text-[var(--naaloo-slate-500)] text-right bg-[#F1F5F9] border-b border-[var(--naaloo-slate-200)]">Total</th>
+                      <th className="py-2 px-4 font-medium text-[var(--naaloo-slate-500)] text-left bg-[var(--naaloo-bg)] border-b border-[var(--naaloo-slate-200)]">Rango</th>
+                      <th className="py-2 px-4 font-medium text-[var(--naaloo-slate-500)] text-right bg-[var(--naaloo-bg)] border-b border-[var(--naaloo-slate-200)]">P.U.</th>
+                      <th className="py-2 px-4 font-medium text-[var(--naaloo-slate-500)] text-right bg-[var(--naaloo-bg)] border-b border-[var(--naaloo-slate-200)]">Total</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -426,7 +424,7 @@ export default function HomePage() {
                       <tr 
                         key={r.id} 
                         ref={el => { rangeRefs.current[r.id] = el; }}
-                        className={`cursor-pointer transition-colors ${rangoActivo?.id === r.id ? 'bg-[#F1F5F9]' : 'hover:bg-slate-50'} ${idx !== 0 ? 'border-t border-[#F1F5F9]' : ''}`}
+                        className={`cursor-pointer transition-colors ${rangoActivo?.id === r.id ? 'bg-[var(--naaloo-blue-subtle)]' : 'hover:bg-[var(--naaloo-bg)]'} ${idx !== 0 ? 'border-t border-[var(--naaloo-slate-100)]' : ''}`}
                         onClick={() => {
                           resetGeneratedState()
                           setRangoActivo(r)
@@ -435,11 +433,11 @@ export default function HomePage() {
                           setValorLicenciaDisplay(calculatedLicencia.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
                         }}
                       >
-                        <td className={`py-2 px-4 border-b border-slate-50 ${rangoActivo?.id === r.id ? 'font-bold text-[#1E293B]' : 'text-[#475569]'}`}>
+                        <td className={`py-2 px-4 border-b border-[var(--naaloo-slate-100)] ${rangoActivo?.id === r.id ? 'font-bold text-[var(--naaloo-blue)] border-l-4 border-l-[var(--naaloo-blue)]' : 'text-[var(--naaloo-slate-600)] border-l-4 border-l-transparent'}`}>
                           {r.rango_min}-{r.rango_max ?? '∞'}
                         </td>
-                        <td className="py-2 px-4 text-right text-[#475569] font-mono border-b border-slate-50">${formatDisplay(Number(r.valor_unitario))}</td>
-                        <td className="py-2 px-4 text-right text-[#64748B] font-mono border-b border-slate-50">${formatDisplay(Math.round(Number(cantidadUsuarios || 0) * Number(r.valor_unitario)))}</td>
+                        <td className="py-2 px-4 text-right text-[var(--naaloo-slate-600)] font-mono border-b border-[var(--naaloo-slate-100)]">${formatDisplay(Number(r.valor_unitario))}</td>
+                        <td className="py-2 px-4 text-right text-[var(--naaloo-slate-500)] font-mono border-b border-[var(--naaloo-slate-100)]">${formatDisplay(Math.round(Number(cantidadUsuarios || 0) * Number(r.valor_unitario)))}</td>
                       </tr>
                     ))}
                   </tbody>

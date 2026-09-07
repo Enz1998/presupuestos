@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Sidebar from '@/components/Sidebar'
+import AppChrome from '@/components/AppChrome'
 
 export const metadata: Metadata = {
   title: 'Fiscal Architect | Generador de Presupuestos',
   description: 'Sistema corporativo de presupuestos',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,17 +18,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="flex h-screen overflow-hidden bg-[var(--naaloo-slate-50)] text-[var(--naaloo-text)]">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto w-full p-4 pt-24 md:p-10">
-          <div className="max-w-[1100px] mx-auto w-full">
-            {children}
-          </div>
-        </main>
+      <body>
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   )

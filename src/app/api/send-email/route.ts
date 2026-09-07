@@ -2,16 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { generatePptx } from '@/lib/pptx-generator'
 import { format } from 'date-fns'
-import * as os from 'os'
-import * as fs from 'fs/promises'
-import * as path from 'path'
 import nodemailer from 'nodemailer'
-const ConvertApi = require('convertapi')
 
 export async function POST(req: NextRequest) {
   try {
     const bodyReq = await req.json()
-    const { id, to, subject, body, format: exportFormat = 'pdf' } = bodyReq
+    const { id, to, subject, body, format: exportFormat = 'pdf', pdfBase64 } = bodyReq
 
     if (!id || !to || !subject || !body) {
       return NextResponse.json({ error: 'Faltan parámetros obligatorios' }, { status: 400 })
@@ -59,59 +55,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Presupuesto no encontrado' }, { status: 404 })
     }
 
-    // 2. Formatear fecha para el PPTX: "2026-04-15" → "15/04/26"
-    const fechaDate = new Date(p.fecha_propuesta + 'T12:00:00')
-    const fechaFormateada = format(fechaDate, 'dd/MM/yy')
+    const baseName = `Presupuesto_Naaloo_${p.nombre_empresa.trim().replace(/[^a-z0-9]/gi, '_')}`
 
-    // 3. Generar el Buffer del PPTX
-    const pptxBuffer = await generatePptx({
-      nombreEmpresa: p.nombre_empresa,
-      cantidadUsuarios: p.cantidad_usuarios,
-      valorLicencia: p.valor_licencia,
-      descuentoPorcentaje: p.descuento_porcentaje,
-      descuentoMeses: p.descuento_meses,
-      recursoExcedente: p.recurso_excedente,
-      valorTotalMensual: p.valor_total_mensual,
-      fechaPropuesta: fechaFormateada,
-    })
-
-    let filename = `Presupuesto_Naaloo_${p.nombre_empresa.trim().replace(/[^a-z0-9]/gi, '_')}.pptx`
+    let filename = `${baseName}.pptx`
     let contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-    let finalBuffer = pptxBuffer
+    let finalBuffer: Buffer
 
-    // 4. Si se pide PDF, usar archivos temporales para ConvertAPI
     if (exportFormat === 'pdf') {
-      const ca = ConvertApi(process.env.CONVERTAPI_SECRET || '')
-      const tempId = crypto.randomUUID()
-      const tempPptxPath = path.join(os.tmpdir(), `${tempId}.pptx`)
-
-      try {
-        await fs.writeFile(tempPptxPath, pptxBuffer)
-
-        const result = await ca.convert('pdf', {
-          File: tempPptxPath
-        }, 'pptx')
-        
-        const tempPdfPath = path.join(os.tmpdir(), `${tempId}.pdf`)
-        await result.saveFiles(tempPdfPath)
-        
-        const pdfFileBuffer = await fs.readFile(tempPdfPath)
-        finalBuffer = pdfFileBuffer
-        
-        filename = filename.replace('.pptx', '.pdf')
-        contentType = 'application/pdf'
-
-        fs.unlink(tempPptxPath).catch(console.error)
-        fs.unlink(tempPdfPath).catch(console.error)
-      } catch (convErr: any) {
-        console.error('Error en conversion ConvertAPI:', convErr)
-        fs.unlink(tempPptxPath).catch(() => {})
-        
-        return NextResponse.json({ 
-          error: 'Error al convertir el presupuesto a PDF', 
-          details: convErr?.message || 'Error desconocido' 
-        }, { status: 500 })
+      if (typeof pdfBase64 !== 'string' || !pdfBase64) {
+        return NextResponse.json({
+          error: 'El PDF se genera en el navegador. Volvé a intentar el envío.',
+        }, { status: 400 })
       }
+      finalBuffer = Buffer.from(pdfBase64, 'base64')
+      filename = `${baseName}.pdf`
+      contentType = 'application/pdf'
+    } else {
+      const fechaDate = new Date(p.fecha_propuesta + 'T12:00:00')
+      const fechaFormateada = format(fechaDate, 'dd/MM/yy')
+      finalBuffer = await generatePptx({
+        nombreEmpresa: p.nombre_empresa,
+        cantidadUsuarios: p.cantidad_usuarios,
+        valorLicencia: p.valor_licencia,
+        descuentoPorcentaje: p.descuento_porcentaje,
+        descuentoMeses: p.descuento_meses,
+        recursoExcedente: p.recurso_excedente,
+        valorTotalMensual: p.valor_total_mensual,
+        fechaPropuesta: fechaFormateada,
+      })
     }
 
     // 5. Enviar el correo con Nodemailer (texto plano + HTML)

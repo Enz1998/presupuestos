@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { login } from './actions'
 
 export default async function LoginPage(props: {
@@ -6,13 +7,21 @@ export default async function LoginPage(props: {
   const searchParams = await props.searchParams;
   return (
     <div className="flex justify-center items-center min-h-[60vh] p-4 md:p-6">
-      <div className="card animate-fadein w-full max-w-[400px] border-2 border-[var(--naaloo-blue-light)]">
+      <div className="card animate-fadein w-full max-w-[400px]">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-[var(--naaloo-text)] mb-2">
-            Naaloo Presupuestos
+          <Image
+            src="/logo.png"
+            alt="Naaloo"
+            width={72}
+            height={72}
+            className="mx-auto mb-4 w-[72px] h-[72px] rounded-[16px] shadow-sm"
+            priority
+          />
+          <h1 className="text-2xl font-bold text-[var(--naaloo-text)] mb-2 lowercase tracking-tight">
+            naaloo
           </h1>
           <p className="text-sm text-[var(--naaloo-gray-600)]">
-            Iniciá sesión para acceder al sistema
+            Iniciá sesión para acceder a Presupuestos
           </p>
         </div>
 

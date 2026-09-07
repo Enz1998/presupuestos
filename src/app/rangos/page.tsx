@@ -177,7 +177,7 @@ export default function RangosPage() {
       )}
 
       {showForm && (
-        <div className="card animate-fadein mb-6 border-2 border-[var(--naaloo-blue-light)]">
+        <div className="card animate-fadein mb-6">
           <p className="section-title">{editingId ? 'Editar rango' : 'Nuevo rango'}</p>
           <form onSubmit={handleSave}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1.5fr] gap-4 items-start md:items-end">

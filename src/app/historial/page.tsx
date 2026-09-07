@@ -2,8 +2,9 @@
 import { useState, useCallback } from 'react'
 import useSWR from 'swr'
 import { Presupuesto } from '@/lib/supabase'
-import { Search, Download, Trash2, FileText, CheckSquare, Square, Mail } from 'lucide-react'
+import { Search, Download, Trash2, FileText, CheckSquare, Square, Mail, Printer } from 'lucide-react'
 import EmailModal from '@/components/EmailModal'
+import { downloadPresupuestoFile } from '@/lib/download-presupuesto'
 
 function formatPeso(v: number) {
   return Math.round(v).toLocaleString('es-AR').replace(/,/g, '.')
@@ -18,6 +19,7 @@ export default function HistorialPage() {
 
   // Selección múltiple
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   // Modal de email
   const [emailModalOpen, setEmailModalOpen] = useState(false)
@@ -75,26 +77,16 @@ export default function HistorialPage() {
     }
   }
 
-  // Descarga robusta via fetch + blob
   const handleDownload = useCallback(async (id: string, format: 'pptx' | 'pdf') => {
+    setDownloadingId(id)
     try {
-      const url = `/api/download/${id}${format === 'pdf' ? '?format=pdf' : ''}`
-      const res = await fetch(url, { cache: 'no-store' })
-      if (!res.ok) throw new Error('Error al descargar')
-      const blob = await res.blob()
-      const disposition = res.headers.get('Content-Disposition') || ''
-      const filenameMatch = disposition.match(/filename="?([^"]+)"?/)
-      const filename = filenameMatch ? filenameMatch[1] : `presupuesto.${format}`
-      const blobUrl = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = blobUrl
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(blobUrl)
-    } catch (err) {
-      alert('Error al descargar el archivo')
+      await downloadPresupuestoFile(id, format)
+    } catch {
+      alert(format === 'pdf'
+        ? 'Permití ventanas emergentes para abrir la vista de impresión.'
+        : 'Error al descargar el archivo')
+    } finally {
+      setDownloadingId(null)
     }
   }, [])
 
@@ -122,7 +114,7 @@ export default function HistorialPage() {
             </button>
           )}
           <div className="relative group w-full md:w-[280px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--naaloo-slate-400)] group-focus-within:text-[var(--naaloo-slate-500)] transition-colors" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--naaloo-slate-400)] group-focus-within:text-[var(--naaloo-blue)] transition-colors" />
             <input 
               type="text" 
               className="input pl-10 py-2 shadow-sm h-10" 
@@ -148,7 +140,7 @@ export default function HistorialPage() {
             <thead className="bg-[var(--naaloo-slate-100)] sticky top-0 z-20">
               <tr>
                 <th className="w-12 px-4 py-3 text-center border-b border-[var(--naaloo-slate-200)]">
-                  <button onClick={toggleAll} className="text-[var(--naaloo-slate-400)] hover:text-[var(--naaloo-slate-600)] transition-colors">
+                  <button onClick={toggleAll} className="text-[var(--naaloo-slate-400)] hover:text-[var(--naaloo-blue)] transition-colors">
                     {selectedIds.length === presupuestos.length && presupuestos.length > 0 ? <CheckSquare size={18} /> : <Square size={18} />}
                   </button>
                 </th>
@@ -160,7 +152,7 @@ export default function HistorialPage() {
                 <th className="px-4 py-3 font-semibold text-[var(--naaloo-slate-500)] text-right border-b border-[var(--naaloo-slate-200)]">Licencia</th>
                 <th className="px-4 py-3 font-semibold text-[var(--naaloo-slate-500)] text-center border-b border-[var(--naaloo-slate-200)]">Descuento</th>
                 <th className="px-4 py-3 font-semibold text-[var(--naaloo-slate-500)] text-right border-b border-[var(--naaloo-slate-200)]">Total</th>
-                <th className="px-4 py-3 font-semibold text-[var(--naaloo-slate-500)] text-right border-b border-[var(--naaloo-slate-200)] w-28">Acciones</th>
+                <th className="px-4 py-3 font-semibold text-[var(--naaloo-slate-500)] text-right border-b border-[var(--naaloo-slate-200)] w-40">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--naaloo-slate-100)]">
@@ -174,7 +166,7 @@ export default function HistorialPage() {
                     <td className="px-4 py-3 text-center">
                       <button 
                         onClick={() => toggleSelect(p.id)}
-                        className={`transition-colors ${selectedIds.includes(p.id) ? 'text-[var(--naaloo-slate-800)]' : 'text-[var(--naaloo-slate-300)]'}`}
+                        className={`transition-colors ${selectedIds.includes(p.id) ? 'text-[var(--naaloo-blue)]' : 'text-[var(--naaloo-slate-300)]'}`}
                       >
                         {selectedIds.includes(p.id) ? <CheckSquare size={18} /> : <Square size={18} />}
                       </button>
@@ -182,13 +174,13 @@ export default function HistorialPage() {
                     <td className="px-4 py-3">
                       <input 
                         type="text" 
-                        className="input !py-1 !px-2 !text-[12px] !border-transparent hover:!border-[var(--naaloo-slate-200)] focus:!border-[var(--naaloo-slate-400)] bg-[var(--naaloo-slate-50)] font-semibold w-24 transition-all"
+                        className="input !py-1 !px-2 !text-[12px] !border-transparent hover:!border-[var(--naaloo-slate-200)] focus:!border-[var(--naaloo-blue)] bg-[var(--naaloo-bg)] font-semibold w-24 transition-all"
                         defaultValue={p.numero_acuerdo}
                         onBlur={(e) => handleEditAcuerdo(p.id, e.target.value)}
                       />
                     </td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[var(--naaloo-slate-100)] text-[var(--naaloo-slate-600)]">V{p.version}</span>
+                      <span className="badge badge-blue">V{p.version}</span>
                     </td>
                     <td className="px-4 py-3 text-[var(--naaloo-slate-600)] font-mono text-[12px]">{p.fecha_propuesta}</td>
                     <td className="px-4 py-3 font-bold text-[var(--naaloo-slate-800)]">{p.nombre_empresa}</td>
@@ -206,32 +198,41 @@ export default function HistorialPage() {
                       ${formatPeso(p.valor_total_mensual)}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => handleOpenEmail(p.id, p.nombre_empresa)} 
                           title="Enviar por Correo"
-                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[#00B2FF] hover:bg-[#E6F4FA] rounded transition-all"
+                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all"
                         >
                           <Mail size={16} />
                         </button>
                         <button 
                           onClick={() => handleDownload(p.id, 'pptx')}
                           title="Descargar PPTX"
-                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-slate-800)] hover:bg-[var(--naaloo-slate-200)] rounded transition-all"
+                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all"
                         >
                           <Download size={16} />
                         </button>
                         <button 
                           onClick={() => handleDownload(p.id, 'pdf')}
-                          title="Descargar PDF"
-                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-slate-800)] hover:bg-[var(--naaloo-slate-200)] rounded transition-all"
+                          disabled={downloadingId === p.id}
+                          title="Abrir vista para imprimir o guardar como PDF en Chrome"
+                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all disabled:opacity-40"
                         >
                           <FileText size={16} />
                         </button>
                         <button 
+                          onClick={() => handleDownload(p.id, 'pdf')}
+                          disabled={downloadingId === p.id}
+                          title="Imprimir / Guardar como PDF (Chrome)"
+                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all disabled:opacity-40"
+                        >
+                          <Printer size={16} />
+                        </button>
+                        <button 
                           onClick={() => handleDelete(p.id)} 
                           title="Eliminar"
-                          className="p-1.5 text-[var(--naaloo-error)] hover:bg-red-50 rounded transition-all"
+                          className="p-1.5 text-[var(--naaloo-error)] hover:bg-red-50 rounded-full transition-all"
                         >
                           <Trash2 size={16} />
                         </button>
