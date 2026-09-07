@@ -72,9 +72,7 @@ export default function HistorialPage() {
     try {
       await downloadPresupuestoFile(id, format)
     } catch {
-      alert(format === 'pdf'
-        ? 'Permití ventanas emergentes para abrir la vista de impresión.'
-        : 'Error al descargar el archivo')
+      alert('Error al descargar el archivo')
     } finally {
       setDownloadingId(null)
     }
@@ -199,7 +197,7 @@ export default function HistorialPage() {
                         <button 
                           onClick={() => handleDownload(p.id, 'pdf')}
                           disabled={downloadingId === p.id}
-                          title="Abrir vista para imprimir o guardar como PDF en Chrome"
+                          title="Descargar PDF"
                           className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all disabled:opacity-40"
                         >
                           <FileText size={16} />

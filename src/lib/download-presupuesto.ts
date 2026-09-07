@@ -1,17 +1,16 @@
-export function openPresupuestoPrint(id: string) {
-  const opened = window.open(`/presupuesto/${id}/imprimir`, '_blank', 'noopener,noreferrer')
-  if (!opened) {
-    throw new Error('Permití ventanas emergentes para abrir la vista de impresión')
-  }
-}
+import { downloadPresupuestoDeckPdf } from '@/lib/presupuesto-deck-pdf'
+import type { Presupuesto } from '@/lib/supabase'
 
 export async function downloadPresupuestoFile(
   id: string,
   format: 'pptx' | 'pdf'
-): Promise<'downloaded' | 'print'> {
+): Promise<'downloaded'> {
   if (format === 'pdf') {
-    openPresupuestoPrint(id)
-    return 'print'
+    const pRes = await fetch(`/api/generar/${id}`, { cache: 'no-store' })
+    if (!pRes.ok) throw new Error('No se encontró el presupuesto')
+    const presupuesto = (await pRes.json()) as Presupuesto
+    await downloadPresupuestoDeckPdf(presupuesto)
+    return 'downloaded'
   }
 
   const url = `/api/download/${id}?t=${Date.now()}`
@@ -31,14 +30,15 @@ export async function downloadPresupuestoFile(
   const buffer = await res.arrayBuffer()
   const disposition = res.headers.get('Content-Disposition') || ''
   const filenameMatch = disposition.match(/filename="?([^"]+)"?/)
-  const filename = filenameMatch ? filenameMatch[1] : 'presupuesto.pptx'
+  const pptxName = filenameMatch ? filenameMatch[1] : 'presupuesto.pptx'
+
   const blob = new Blob([buffer], {
     type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   })
   const blobUrl = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = blobUrl
-  a.download = filename
+  a.download = pptxName
   document.body.appendChild(a)
   a.click()
   a.remove()
