@@ -2,8 +2,7 @@
 import { useState, useCallback } from 'react'
 import useSWR from 'swr'
 import { Presupuesto } from '@/lib/supabase'
-import { Search, Download, Trash2, FileText, CheckSquare, Square, Mail, Printer } from 'lucide-react'
-import EmailModal from '@/components/EmailModal'
+import { Search, Download, Trash2, FileText, CheckSquare, Square } from 'lucide-react'
 import { downloadPresupuestoFile } from '@/lib/download-presupuesto'
 
 function formatPeso(v: number) {
@@ -20,15 +19,6 @@ export default function HistorialPage() {
   // Selección múltiple
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
-
-  // Modal de email
-  const [emailModalOpen, setEmailModalOpen] = useState(false)
-  const [emailData, setEmailData] = useState<{ id: string, empresa: string } | null>(null)
-
-  const handleOpenEmail = (id: string, empresa: string) => {
-    setEmailData({ id, empresa })
-    setEmailModalOpen(true)
-  }
 
   const loadHistorial = async (query = '') => {
     // SWR already updates when `q` state changes, but we can call mutate to force refresh if needed
@@ -200,13 +190,6 @@ export default function HistorialPage() {
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                         <button 
-                          onClick={() => handleOpenEmail(p.id, p.nombre_empresa)} 
-                          title="Enviar por Correo"
-                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all"
-                        >
-                          <Mail size={16} />
-                        </button>
-                        <button 
                           onClick={() => handleDownload(p.id, 'pptx')}
                           title="Descargar PPTX"
                           className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all"
@@ -220,14 +203,6 @@ export default function HistorialPage() {
                           className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all disabled:opacity-40"
                         >
                           <FileText size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handleDownload(p.id, 'pdf')}
-                          disabled={downloadingId === p.id}
-                          title="Imprimir / Guardar como PDF (Chrome)"
-                          className="p-1.5 text-[var(--naaloo-slate-500)] hover:text-[var(--naaloo-blue)] hover:bg-[var(--naaloo-blue-subtle)] rounded-full transition-all disabled:opacity-40"
-                        >
-                          <Printer size={16} />
                         </button>
                         <button 
                           onClick={() => handleDelete(p.id)} 
@@ -245,13 +220,6 @@ export default function HistorialPage() {
           </table>
         </div>
       </div>
-
-      <EmailModal 
-        isOpen={emailModalOpen} 
-        onClose={() => setEmailModalOpen(false)} 
-        presupuestoId={emailData?.id ?? null} 
-        empresa={emailData?.empresa ?? ''} 
-      />
     </div>
   )
 }

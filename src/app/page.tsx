@@ -1,8 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { RangoPrecio, findRangoForUsuarios, roundToNearest10 } from '@/lib/supabase'
-import { Building2, Key, BarChart3, FileText, Download, Mail, Printer } from 'lucide-react'
-import EmailModal from '@/components/EmailModal'
+import { Building2, Key, BarChart3, FileText, Download } from 'lucide-react'
 import { downloadPresupuestoFile } from '@/lib/download-presupuesto'
 
 import useSWR from 'swr'
@@ -64,7 +63,6 @@ export default function HomePage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [generatedId, setGeneratedId] = useState<string | null>(null)
-  const [emailModalOpen, setEmailModalOpen] = useState(false)
   const [downloading, setDownloading] = useState(false)
 
   // Resetea el estado de "presupuesto generado" cuando el usuario empieza a editar
@@ -72,7 +70,6 @@ export default function HomePage() {
     if (success || generatedId) {
       setSuccess(false)
       setGeneratedId(null)
-      setEmailModalOpen(false)
       setDownloading(false)
     }
   }, [success, generatedId])
@@ -91,7 +88,6 @@ export default function HomePage() {
     setValorTotal(0)
     setSuccess(false)
     setGeneratedId(null)
-    setEmailModalOpen(false)
     setDownloading(false)
     setError('')
   }, [])
@@ -357,13 +353,6 @@ export default function HomePage() {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => setEmailModalOpen(true)}
-                      className="btn-primary py-2 text-[13px]"
-                    >
-                      <Mail size={14} /> Correo
-                    </button>
-                    <button
-                      type="button"
                       disabled={downloading || !generatedId}
                       onClick={() => generatedId && handleDownload(generatedId, 'pptx')}
                       className="btn-secondary py-2 text-[13px]"
@@ -377,14 +366,6 @@ export default function HomePage() {
                       className="btn-secondary py-2 text-[13px]"
                     >
                       {downloading ? <div className="spinner-muted w-3 h-3" /> : <FileText size={14} />} PDF
-                    </button>
-                    <button
-                      type="button"
-                      disabled={downloading || !generatedId}
-                      onClick={() => generatedId && handleDownload(generatedId, 'pdf')}
-                      className="btn-secondary py-2 text-[13px]"
-                    >
-                      {downloading ? <div className="spinner-muted w-3 h-3" /> : <Printer size={14} />} Imprimir
                     </button>
                   </div>
                 <button 
@@ -447,13 +428,6 @@ export default function HomePage() {
           </div>
         </div>
       </form>
-
-      <EmailModal 
-        isOpen={emailModalOpen} 
-        onClose={() => setEmailModalOpen(false)} 
-        presupuestoId={generatedId} 
-        empresa={nombreEmpresa} 
-      />
     </div>
   )
 }
