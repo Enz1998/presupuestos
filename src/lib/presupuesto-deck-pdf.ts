@@ -8,7 +8,8 @@ export async function downloadPresupuestoDeckPdf(p: Presupuesto): Promise<void> 
   const pdf = await PDFDocument.create()
 
   for (const src of urls) {
-    const bytes = new Uint8Array(await fetch(src).then((res) => res.arrayBuffer()))
+    const buffer = await fetch(src).then((res) => res.arrayBuffer())
+    const bytes = new Uint8Array(buffer)
     const image = src.startsWith('data:image/jpeg')
       ? await pdf.embedJpg(bytes)
       : await pdf.embedPng(bytes)
