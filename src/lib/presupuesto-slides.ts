@@ -221,7 +221,7 @@ function paintSlide(img: HTMLImageElement, n: number, p: Presupuesto): string {
 export async function buildSlideDataUrls(p: Presupuesto): Promise<string[]> {
   const urls: string[] = []
   for (let n = 1; n <= SLIDE_COUNT; n++) {
-    const img = await loadImage(`/print-slides/${String(n).padStart(2, '0')}.png?v=3`)
+    const img = await loadImage(`/print-slides/${String(n).padStart(2, '0')}.png?v=4`)
     urls.push(n === 1 || n === 6 ? paintSlide(img, n, p) : img.src)
   }
   return urls
