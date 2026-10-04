@@ -1,0 +1,630 @@
+{
+  "lista_base": [
+    {
+      "tramo": 1,
+      "rango_min": 0,
+      "rango_max": 10,
+      "valor_unitario": 6300.0
+    },
+    {
+      "tramo": 2,
+      "rango_min": 11,
+      "rango_max": 15,
+      "valor_unitario": 5655.0
+    },
+    {
+      "tramo": 3,
+      "rango_min": 16,
+      "rango_max": 20,
+      "valor_unitario": 5180.0
+    },
+    {
+      "tramo": 4,
+      "rango_min": 21,
+      "rango_max": 25,
+      "valor_unitario": 4860.0
+    },
+    {
+      "tramo": 5,
+      "rango_min": 26,
+      "rango_max": 30,
+      "valor_unitario": 4637.5
+    },
+    {
+      "tramo": 6,
+      "rango_min": 31,
+      "rango_max": 35,
+      "valor_unitario": 4420.0
+    },
+    {
+      "tramo": 7,
+      "rango_min": 36,
+      "rango_max": 40,
+      "valor_unitario": 4207.5
+    },
+    {
+      "tramo": 8,
+      "rango_min": 41,
+      "rango_max": 45,
+      "valor_unitario": 4000.0
+    },
+    {
+      "tramo": 9,
+      "rango_min": 46,
+      "rango_max": 50,
+      "valor_unitario": 3487.5
+    },
+    {
+      "tramo": 10,
+      "rango_min": 51,
+      "rango_max": 55,
+      "valor_unitario": 3300.0
+    },
+    {
+      "tramo": 11,
+      "rango_min": 56,
+      "rango_max": 60,
+      "valor_unitario": 3117.5
+    },
+    {
+      "tramo": 12,
+      "rango_min": 61,
+      "rango_max": 65,
+      "valor_unitario": 2975.0
+    },
+    {
+      "tramo": 13,
+      "rango_min": 66,
+      "rango_max": 70,
+      "valor_unitario": 2835.0
+    },
+    {
+      "tramo": 14,
+      "rango_min": 71,
+      "rango_max": 75,
+      "valor_unitario": 2697.5
+    },
+    {
+      "tramo": 15,
+      "rango_min": 76,
+      "rango_max": 80,
+      "valor_unitario": 2562.5
+    },
+    {
+      "tramo": 16,
+      "rango_min": 81,
+      "rango_max": 85,
+      "valor_unitario": 2430.0
+    },
+    {
+      "tramo": 17,
+      "rango_min": 86,
+      "rango_max": 90,
+      "valor_unitario": 2400.0
+    },
+    {
+      "tramo": 18,
+      "rango_min": 91,
+      "rango_max": 95,
+      "valor_unitario": 2370.0
+    },
+    {
+      "tramo": 19,
+      "rango_min": 96,
+      "rango_max": 100,
+      "valor_unitario": 2340.0
+    },
+    {
+      "tramo": 20,
+      "rango_min": 101,
+      "rango_max": 125,
+      "valor_unitario": 2310.0
+    },
+    {
+      "tramo": 21,
+      "rango_min": 126,
+      "rango_max": 150,
+      "valor_unitario": 2280.0
+    },
+    {
+      "tramo": 22,
+      "rango_min": 151,
+      "rango_max": 175,
+      "valor_unitario": 2250.0
+    },
+    {
+      "tramo": 23,
+      "rango_min": 176,
+      "rango_max": 200,
+      "valor_unitario": 2220.0
+    },
+    {
+      "tramo": 24,
+      "rango_min": 201,
+      "rango_max": 225,
+      "valor_unitario": 2190.0
+    },
+    {
+      "tramo": 25,
+      "rango_min": 226,
+      "rango_max": 250,
+      "valor_unitario": 2160.0
+    },
+    {
+      "tramo": 26,
+      "rango_min": 251,
+      "rango_max": 275,
+      "valor_unitario": 2130.0
+    },
+    {
+      "tramo": 27,
+      "rango_min": 276,
+      "rango_max": 300,
+      "valor_unitario": 2100.0
+    },
+    {
+      "tramo": 28,
+      "rango_min": 301,
+      "rango_max": 325,
+      "valor_unitario": 2070.0
+    },
+    {
+      "tramo": 29,
+      "rango_min": 326,
+      "rango_max": 350,
+      "valor_unitario": 2040.0
+    },
+    {
+      "tramo": 30,
+      "rango_min": 351,
+      "rango_max": 375,
+      "valor_unitario": 2010.0
+    },
+    {
+      "tramo": 31,
+      "rango_min": 376,
+      "rango_max": 400,
+      "valor_unitario": 1980.0
+    },
+    {
+      "tramo": 32,
+      "rango_min": 401,
+      "rango_max": 425,
+      "valor_unitario": 1950.0
+    },
+    {
+      "tramo": 33,
+      "rango_min": 426,
+      "rango_max": 450,
+      "valor_unitario": 1920.0
+    },
+    {
+      "tramo": 34,
+      "rango_min": 451,
+      "rango_max": 475,
+      "valor_unitario": 1890.0
+    },
+    {
+      "tramo": 35,
+      "rango_min": 476,
+      "rango_max": 500,
+      "valor_unitario": 1800.0
+    },
+    {
+      "tramo": 36,
+      "rango_min": 501,
+      "rango_max": 525,
+      "valor_unitario": 1785.0
+    },
+    {
+      "tramo": 37,
+      "rango_min": 526,
+      "rango_max": 550,
+      "valor_unitario": 1770.0
+    },
+    {
+      "tramo": 38,
+      "rango_min": 551,
+      "rango_max": 600,
+      "valor_unitario": 1740.0
+    },
+    {
+      "tramo": 39,
+      "rango_min": 601,
+      "rango_max": 650,
+      "valor_unitario": 1710.0
+    },
+    {
+      "tramo": 40,
+      "rango_min": 651,
+      "rango_max": 700,
+      "valor_unitario": 1680.0
+    },
+    {
+      "tramo": 41,
+      "rango_min": 701,
+      "rango_max": 750,
+      "valor_unitario": 1650.0
+    },
+    {
+      "tramo": 42,
+      "rango_min": 751,
+      "rango_max": 800,
+      "valor_unitario": 1620.0
+    },
+    {
+      "tramo": 43,
+      "rango_min": 801,
+      "rango_max": 850,
+      "valor_unitario": 1590.0
+    },
+    {
+      "tramo": 44,
+      "rango_min": 851,
+      "rango_max": 900,
+      "valor_unitario": 1560.0
+    },
+    {
+      "tramo": 45,
+      "rango_min": 901,
+      "rango_max": 950,
+      "valor_unitario": 1530.0
+    },
+    {
+      "tramo": 46,
+      "rango_min": 951,
+      "rango_max": 1000,
+      "valor_unitario": 1500.0
+    },
+    {
+      "tramo": 47,
+      "rango_min": 1001,
+      "rango_max": 1100,
+      "valor_unitario": 1440.0
+    },
+    {
+      "tramo": 48,
+      "rango_min": 1101,
+      "rango_max": 1200,
+      "valor_unitario": 1410.0
+    },
+    {
+      "tramo": 49,
+      "rango_min": 1201,
+      "rango_max": 1300,
+      "valor_unitario": 1380.0
+    },
+    {
+      "tramo": 50,
+      "rango_min": 1301,
+      "rango_max": 1400,
+      "valor_unitario": 1350.0
+    },
+    {
+      "tramo": 51,
+      "rango_min": 1401,
+      "rango_max": 1500,
+      "valor_unitario": 1320.0
+    },
+    {
+      "tramo": 52,
+      "rango_min": 1501,
+      "rango_max": null,
+      "valor_unitario": 1290.0
+    }
+  ],
+  "lista_aumento_20": [
+    {
+      "tramo": 1,
+      "rango_min": 0,
+      "rango_max": 10,
+      "valor_unitario": 7560.0
+    },
+    {
+      "tramo": 2,
+      "rango_min": 11,
+      "rango_max": 15,
+      "valor_unitario": 6786.0
+    },
+    {
+      "tramo": 3,
+      "rango_min": 16,
+      "rango_max": 20,
+      "valor_unitario": 6216.0
+    },
+    {
+      "tramo": 4,
+      "rango_min": 21,
+      "rango_max": 25,
+      "valor_unitario": 5832.0
+    },
+    {
+      "tramo": 5,
+      "rango_min": 26,
+      "rango_max": 30,
+      "valor_unitario": 5565.0
+    },
+    {
+      "tramo": 6,
+      "rango_min": 31,
+      "rango_max": 35,
+      "valor_unitario": 5304.0
+    },
+    {
+      "tramo": 7,
+      "rango_min": 36,
+      "rango_max": 40,
+      "valor_unitario": 5049.0
+    },
+    {
+      "tramo": 8,
+      "rango_min": 41,
+      "rango_max": 45,
+      "valor_unitario": 4800.0
+    },
+    {
+      "tramo": 9,
+      "rango_min": 46,
+      "rango_max": 50,
+      "valor_unitario": 4185.0
+    },
+    {
+      "tramo": 10,
+      "rango_min": 51,
+      "rango_max": 55,
+      "valor_unitario": 3960.0
+    },
+    {
+      "tramo": 11,
+      "rango_min": 56,
+      "rango_max": 60,
+      "valor_unitario": 3741.0
+    },
+    {
+      "tramo": 12,
+      "rango_min": 61,
+      "rango_max": 65,
+      "valor_unitario": 3570.0
+    },
+    {
+      "tramo": 13,
+      "rango_min": 66,
+      "rango_max": 70,
+      "valor_unitario": 3402.0
+    },
+    {
+      "tramo": 14,
+      "rango_min": 71,
+      "rango_max": 75,
+      "valor_unitario": 3237.0
+    },
+    {
+      "tramo": 15,
+      "rango_min": 76,
+      "rango_max": 80,
+      "valor_unitario": 3075.0
+    },
+    {
+      "tramo": 16,
+      "rango_min": 81,
+      "rango_max": 85,
+      "valor_unitario": 2916.0
+    },
+    {
+      "tramo": 17,
+      "rango_min": 86,
+      "rango_max": 90,
+      "valor_unitario": 2880.0
+    },
+    {
+      "tramo": 18,
+      "rango_min": 91,
+      "rango_max": 95,
+      "valor_unitario": 2844.0
+    },
+    {
+      "tramo": 19,
+      "rango_min": 96,
+      "rango_max": 100,
+      "valor_unitario": 2808.0
+    },
+    {
+      "tramo": 20,
+      "rango_min": 101,
+      "rango_max": 125,
+      "valor_unitario": 2772.0
+    },
+    {
+      "tramo": 21,
+      "rango_min": 126,
+      "rango_max": 150,
+      "valor_unitario": 2736.0
+    },
+    {
+      "tramo": 22,
+      "rango_min": 151,
+      "rango_max": 175,
+      "valor_unitario": 2700.0
+    },
+    {
+      "tramo": 23,
+      "rango_min": 176,
+      "rango_max": 200,
+      "valor_unitario": 2664.0
+    },
+    {
+      "tramo": 24,
+      "rango_min": 201,
+      "rango_max": 225,
+      "valor_unitario": 2628.0
+    },
+    {
+      "tramo": 25,
+      "rango_min": 226,
+      "rango_max": 250,
+      "valor_unitario": 2592.0
+    },
+    {
+      "tramo": 26,
+      "rango_min": 251,
+      "rango_max": 275,
+      "valor_unitario": 2556.0
+    },
+    {
+      "tramo": 27,
+      "rango_min": 276,
+      "rango_max": 300,
+      "valor_unitario": 2520.0
+    },
+    {
+      "tramo": 28,
+      "rango_min": 301,
+      "rango_max": 325,
+      "valor_unitario": 2484.0
+    },
+    {
+      "tramo": 29,
+      "rango_min": 326,
+      "rango_max": 350,
+      "valor_unitario": 2448.0
+    },
+    {
+      "tramo": 30,
+      "rango_min": 351,
+      "rango_max": 375,
+      "valor_unitario": 2412.0
+    },
+    {
+      "tramo": 31,
+      "rango_min": 376,
+      "rango_max": 400,
+      "valor_unitario": 2376.0
+    },
+    {
+      "tramo": 32,
+      "rango_min": 401,
+      "rango_max": 425,
+      "valor_unitario": 2340.0
+    },
+    {
+      "tramo": 33,
+      "rango_min": 426,
+      "rango_max": 450,
+      "valor_unitario": 2304.0
+    },
+    {
+      "tramo": 34,
+      "rango_min": 451,
+      "rango_max": 475,
+      "valor_unitario": 2268.0
+    },
+    {
+      "tramo": 35,
+      "rango_min": 476,
+      "rango_max": 500,
+      "valor_unitario": 2160.0
+    },
+    {
+      "tramo": 36,
+      "rango_min": 501,
+      "rango_max": 525,
+      "valor_unitario": 2142.0
+    },
+    {
+      "tramo": 37,
+      "rango_min": 526,
+      "rango_max": 550,
+      "valor_unitario": 2124.0
+    },
+    {
+      "tramo": 38,
+      "rango_min": 551,
+      "rango_max": 600,
+      "valor_unitario": 2088.0
+    },
+    {
+      "tramo": 39,
+      "rango_min": 601,
+      "rango_max": 650,
+      "valor_unitario": 2052.0
+    },
+    {
+      "tramo": 40,
+      "rango_min": 651,
+      "rango_max": 700,
+      "valor_unitario": 2016.0
+    },
+    {
+      "tramo": 41,
+      "rango_min": 701,
+      "rango_max": 750,
+      "valor_unitario": 1980.0
+    },
+    {
+      "tramo": 42,
+      "rango_min": 751,
+      "rango_max": 800,
+      "valor_unitario": 1944.0
+    },
+    {
+      "tramo": 43,
+      "rango_min": 801,
+      "rango_max": 850,
+      "valor_unitario": 1908.0
+    },
+    {
+      "tramo": 44,
+      "rango_min": 851,
+      "rango_max": 900,
+      "valor_unitario": 1872.0
+    },
+    {
+      "tramo": 45,
+      "rango_min": 901,
+      "rango_max": 950,
+      "valor_unitario": 1836.0
+    },
+    {
+      "tramo": 46,
+      "rango_min": 951,
+      "rango_max": 1000,
+      "valor_unitario": 1800.0
+    },
+    {
+      "tramo": 47,
+      "rango_min": 1001,
+      "rango_max": 1100,
+      "valor_unitario": 1728.0
+    },
+    {
+      "tramo": 48,
+      "rango_min": 1101,
+      "rango_max": 1200,
+      "valor_unitario": 1692.0
+    },
+    {
+      "tramo": 49,
+      "rango_min": 1201,
+      "rango_max": 1300,
+      "valor_unitario": 1656.0
+    },
+    {
+      "tramo": 50,
+      "rango_min": 1301,
+      "rango_max": 1400,
+      "valor_unitario": 1620.0
+    },
+    {
+      "tramo": 51,
+      "rango_min": 1401,
+      "rango_max": 1500,
+      "valor_unitario": 1584.0
+    },
+    {
+      "tramo": 52,
+      "rango_min": 1501,
+      "rango_max": null,
+      "valor_unitario": 1548.0
+    }
+  ]
+}
